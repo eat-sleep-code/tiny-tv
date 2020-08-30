@@ -10,7 +10,7 @@ sudo apt update
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
 sudo apt install -y git python3 python3-pip omxplayer ffmpeg
-sudo pip3 install ffmpeg-python youtube_dl 
+sudo pip3 install youtube_dl 
 
 echo ''
 echo -e '\033[93mInstalling Tiny TV... \033[0m'
