@@ -7,7 +7,7 @@ import sys
 import time
 import youtube_dl
 
-version = "2020.08.30"
+version = "2020.08.31"
 
 # === Argument Handling ========================================================
 
