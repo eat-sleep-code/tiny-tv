@@ -108,10 +108,10 @@ try:
 		if removeVerticalBars == True:
 			print(' Starting removal of vertical black bars (this will take a while)... ')
 			videoToConvertPath = videoCategoryFolder + input
-			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:b "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
+			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:v "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
 		elif removeHorizontalBars == True:
 			print(' Starting removal of horizontal black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:b "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
+			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:v "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
 			subprocess.call('', shell=True)
 	
 		print(' Starting playback... ')
