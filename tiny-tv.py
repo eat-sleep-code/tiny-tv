@@ -13,7 +13,8 @@ version = "2020.08.30"
 
 parser = argparse.ArgumentParser()
 parser.add_argument(dest='input', help='Select the video to be played', type=str)
-parser.add_argument('--saveAs', dest='saveAs', help='Enter the name you would like the file saved as', type=str)
+parser.add_argument('--saveAs', dest='saveAs', help='Enter the name you would like the file saved as', type=str) # USED IF DOWNLOADING FROM YOUTUBE ONLY
+parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for downloaded videos', type=str) # USED IF DOWNLOADING FROM YOUTUBE ONLY
 parser.add_argument('--category', dest='category', help='Select the category', type=str)
 parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)', type=bool)
 parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool)
@@ -25,9 +26,18 @@ input = args.input or ''
 
 saveAs = args.saveAs or 'YOUTUBEID'
 
+
+maximumVideoHeight = args.maximumVideoHeight = 480
+try:
+	maximumVideoHeight = int(volume)
+except:
+	maximumVideoHeightlume = 480
+
+
 category = args.category or ''
 videoFolder = '/home/pi/videos/'
 videoCategoryFolder = videoFolder + category + '/'
+
 
 removeVerticalBars = args.removeVerticalBars or False
 if removeVerticalBars != True:
@@ -37,6 +47,7 @@ if removeVerticalBars != True:
 removeHorizontalBars = args.removeHorizontalBars or False
 if removeHorizontalBars != True:
 	removeHorizontalBars = False
+
 
 volume = args.volume or 400
 try:
@@ -91,7 +102,8 @@ try:
 		if input.find('youtube.com') != -1:
 			print(' Starting download of video... ')
 			youtubeDownloadOptions = { 
-				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s'
+				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
+				'format': 'best[height=' + str(maximumVideoHeight) + ']'
 			}
 			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
 				info = youtubeDownload.extract_info(input)
@@ -107,12 +119,17 @@ try:
 					print(str(ex))
 		if removeVerticalBars == True:
 			print(' Starting removal of vertical black bars (this will take a while)... ')
-			videoToConvertPath = videoCategoryFolder + input
-			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:v "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+			os.remove(videoCategoryFolder + video)
+			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + saveAs)
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+			
 		elif removeHorizontalBars == True:
 			print(' Starting removal of horizontal black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:v "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
-			subprocess.call('', shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
+			os.remove(videoCategoryFolder + video)
+			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + saveAs)
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 	
 		print(' Starting playback... ')
 		videoFullPath = videoCategoryFolder + str(video)
