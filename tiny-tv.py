@@ -2,31 +2,28 @@ import argparse
 import keyboard
 import os
 import subprocess
+import shutil
 import sys
 import time
+import youtube_dl
 
 version = "2020.08.30"
 
 # === Argument Handling ========================================================
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--input', dest='input', help='Select the video to be played')
-parser.add_argument('--category', dest='category', help='Select the category')
-parser.add_argument('--volume', dest='volume', help='Set the initial volume')
-parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)')
-parser.add_argument('--removeHorizontalBars', dest='removeVerticalBars', help='Remove the horizontal black bars from the input file (time-intensive)')
+parser.add_argument(dest='input', help='Select the video to be played', type=str)
+parser.add_argument('--saveAs', dest='saveAs', help='Enter the name you would like the file saved as', type=str)
+parser.add_argument('--category', dest='category', help='Select the category', type=str)
+parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)', type=bool)
+parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool)
+parser.add_argument('--volume', dest='volume', help='Set the initial volume', type=int)
 
 args = parser.parse_args()
 
-
 input = args.input or ''
 
-volume = args.volume or 400
-try:
-	volume = int(volume)
-except:
-	volume = 400
-
+saveAs = args.saveAs or 'YOUTUBEID'
 
 category = args.category or ''
 videoFolder = '/home/pi/videos/'
@@ -40,6 +37,12 @@ if removeVerticalBars != True:
 removeHorizontalBars = args.removeHorizontalBars or False
 if removeHorizontalBars != True:
 	removeHorizontalBars = False
+
+volume = args.volume or 400
+try:
+	volume = int(volume)
+except:
+	volume = 400
 
 
 # === Echo Control =============================================================
@@ -73,10 +76,7 @@ def getVideoPath(inputPath):
 
 try: 
 	os.chdir('/home/pi')
-	global category
-	global input 
 	
-	global volume
 	print('\n Tiny TV ' + version )
 	print('\n ----------------------------------------------------------------------\n')
 		
@@ -86,23 +86,38 @@ try:
 			echoOn()
 			break
 		
-		while True:	
-			video = input
-			if input.fine('youtube.com') != -1:
-				print(' Starting download of video... ')
-				subprocess.call('youtube-dl -f 18 ' + input, shell=True)
-				video = subprocess.call('youtube-dl --get-filename ' + input, shell=True)
-			if removeVerticalBars == True:
-				print(' Starting removal of vertical black bars (this will take a while)... ')
-				videoToConvertPath = videoCategoryFolder + input;
-				subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:b "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath + ' , shell=True)
-			elif removeHorizontalBars == True:
-				print(' Starting removal of horizontal black bars (this will take a while)... ')
-				subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:b "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath + ' , shell=True)
-				subprocess.call('', shell=True)
-			
-			videoFullPath = videoCategoryFolder + video
-			subprocess.call('omxplayer -o alsa --vol ' + str(volume) + '"' + videoFullPath + '" --loop', shell=True)
+
+		video = input
+		if input.find('youtube.com') != -1:
+			print(' Starting download of video... ')
+			youtubeDownloadOptions = { 
+				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s'
+			}
+			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
+				info = youtubeDownload.extract_info(input)
+				video = info.get('id', None) + '.' + info.get('ext', None)
+				
+			print(' Setting the owner of the file to current user...')
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+			if saveAs != 'YOUTUBEID':
+				try:
+					os.rename(videoCategoryFolder + video, videoCategoryFolder + saveAs)
+					video = saveAs
+				except Exception as ex:
+					print(str(ex))
+		if removeVerticalBars == True:
+			print(' Starting removal of vertical black bars (this will take a while)... ')
+			videoToConvertPath = videoCategoryFolder + input
+			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:b "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
+		elif removeHorizontalBars == True:
+			print(' Starting removal of horizontal black bars (this will take a while)... ')
+			subprocess.call('ffmpeg -i "' + videoToConvertPath +'" -filter:b "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy debarred.mp4 && sudo rm -Rf ' + videoToConvertPath + ' && mv debarred.mp4 ' + videoToConvertPath , shell=True)
+			subprocess.call('', shell=True)
+	
+		print(' Starting playback... ')
+		videoFullPath = videoCategoryFolder + str(video)
+		subprocess.call('omxplayer --loop -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+		sys.exit(0)
 
 
 except KeyboardInterrupt:
