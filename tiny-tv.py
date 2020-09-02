@@ -7,7 +7,7 @@ import sys
 import time
 import youtube_dl
 
-version = "2020.08.31"
+version = "2020.09.02"
 
 # === Argument Handling ========================================================
 
@@ -22,7 +22,9 @@ parser.add_argument('--volume', dest='volume', help='Set the initial volume', ty
 
 args = parser.parse_args()
 
+
 input = args.input or ''
+
 
 saveAs = args.saveAs or 'YOUTUBEID'
 
@@ -83,7 +85,7 @@ def getVideoPath(inputPath):
 # ------------------------------------------------------------------------------
 
 
-# === Tiny TV =============================================================
+# === Tiny TV ==================================================================
 
 try: 
 	os.chdir('/home/pi')
@@ -97,8 +99,10 @@ try:
 			echoOn()
 			break
 		
-
 		video = input
+		
+		# --- YouTube Download -------------------------------------------------
+
 		if input.find('youtube.com') != -1:
 			print(' Starting download of video... ')
 			youtubeDownloadOptions = { 
@@ -117,20 +121,27 @@ try:
 					video = saveAs
 				except Exception as ex:
 					print(str(ex))
+		elif input.find('.') == -1 and input.find(';') == -1:
+			input = input + '.mp4'
+
+		# --- Pillar Box / Letter Box Removal ----------------------------------
+
 		if removeVerticalBars == True:
 			print(' Starting removal of vertical black bars (this will take a while)... ')
 			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 			os.remove(videoCategoryFolder + video)
-			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + saveAs)
+			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 			
 		elif removeHorizontalBars == True:
 			print(' Starting removal of horizontal black bars (this will take a while)... ')
 			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
 			os.remove(videoCategoryFolder + video)
-			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + saveAs)
+			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 	
+		# --- Playback ---------------------------------------------------------
+
 		print(' Starting playback... ')
 		videoFullPath = videoCategoryFolder + str(video)
 		subprocess.call('omxplayer --loop -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
