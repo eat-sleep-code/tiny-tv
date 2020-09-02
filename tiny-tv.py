@@ -99,7 +99,10 @@ try:
 			echoOn()
 			break
 		
+		if input.find('.') == -1 and input.find(';') == -1:
+			input = input + '.mp4'
 		video = input
+		
 		
 		# --- YouTube Download -------------------------------------------------
 
@@ -121,8 +124,7 @@ try:
 					video = saveAs
 				except Exception as ex:
 					print(str(ex))
-		elif input.find('.') == -1 and input.find(';') == -1:
-			input = input + '.mp4'
+		
 
 		# --- Pillar Box / Letter Box Removal ----------------------------------
 
