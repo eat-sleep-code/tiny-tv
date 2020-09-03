@@ -29,9 +29,9 @@ tiny-tv <options>
 
 + _--input_ : Select the video to be played    *(required, can be a file name or a Youtube URL)*
 + _--saveAs_ : Enter the name you would like the file saved as     *(Used if downloading from YouTube only)*
-+ _--maximumVideoHeight_ : Set the maximum height (in pixels) for downloaded videos     *(Used if downloading from YouTube only)*
 + _--category_ : Select the category     *(This will set the subfolder, for example `--category cartoons` will use the `/home/pi/videos/cartoons` folder)*
-+ _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file (time-intensive)    *(True/False)*
-+ _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file (time-intensive)    *(True/False)*
++ _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file (time-intensive)    *(default: False)*
++ _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file (time-intensive)    *(default: False)*
++ _--maximumVideoHeight_ : Set the maximum height (in pixels) for downloaded videos     *(default: 480)*
 + _--volume_ : Set the initial volume *(default: 400  `[4db]`)*
 
