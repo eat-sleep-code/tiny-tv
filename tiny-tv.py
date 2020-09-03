@@ -7,17 +7,17 @@ import sys
 import time
 import youtube_dl
 
-version = "2020.09.02"
+version = "2020.09.03"
 
 # === Argument Handling ========================================================
 
 parser = argparse.ArgumentParser()
 parser.add_argument(dest='input', help='Select the video to be played', type=str)
 parser.add_argument('--saveAs', dest='saveAs', help='Enter the name you would like the file saved as', type=str) # USED IF DOWNLOADING FROM YOUTUBE ONLY
-parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for downloaded videos', type=str) # USED IF DOWNLOADING FROM YOUTUBE ONLY
 parser.add_argument('--category', dest='category', help='Select the category', type=str)
 parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)', type=bool)
 parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool)
+parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for the video', type=int) 
 parser.add_argument('--volume', dest='volume', help='Set the initial volume', type=int)
 
 args = parser.parse_args()
@@ -29,11 +29,11 @@ input = args.input or ''
 saveAs = args.saveAs or 'YOUTUBEID'
 
 
-maximumVideoHeight = args.maximumVideoHeight = 720
+maximumVideoHeight = args.maximumVideoHeight = 480
 try:
 	maximumVideoHeight = int(maximumVideoHeight)
 except:
-	maximumVideoHeightlume = 720
+	maximumVideoHeight = 480
 
 
 category = args.category or ''
@@ -57,6 +57,8 @@ try:
 except:
 	volume = 400
 
+
+playCount = 0
 
 # === Echo Control =============================================================
 
@@ -108,9 +110,16 @@ try:
 
 		if input.find('youtube.com') != -1:
 			print(' Starting download of video... ')
+			downloadHeight = 720
+			if maximumVideoHeight >= 4320: # Future product
+				downloadHeight = 4320
+			elif maximumVideoHeight >= 2160: # Minimum Raspberry Pi 4
+				downloadHeight = 2160
+			elif maximumVideoHeight >= 1080: # Minimum Raspberry Pi 3B+
+				downloadHeight = 1080
 			youtubeDownloadOptions = { 
 				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
-				'format': 'best[height=' + str(maximumVideoHeight) + ']'
+				'format': 'best[height=' + str(downloadHeight) + ']'
 			}
 			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
 				info = youtubeDownload.extract_info(input)
@@ -130,25 +139,28 @@ try:
 
 		if removeVerticalBars == True:
 			print(' Starting removal of vertical black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/9*16:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/9*16:ih,scale=-2:' + str(maximumVideoHeight) + '" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 			os.remove(videoCategoryFolder + video)
 			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 			
 		elif removeHorizontalBars == True:
 			print(' Starting removal of horizontal black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + '" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
 			os.remove(videoCategoryFolder + video)
 			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 	
 		# --- Playback ---------------------------------------------------------
 
-		print(' Starting playback... ')
-		videoFullPath = videoCategoryFolder + str(video)
-		subprocess.call('omxplayer --loop -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+		playCount = 0
+		while playCount >= 0:
+			playCount += 1
+			print(' Starting playback ' + str(playCount) + '...')
+			videoFullPath = videoCategoryFolder + str(video)
+			subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+			
 		sys.exit(0)
-
 
 except KeyboardInterrupt:
 	echoOn()
