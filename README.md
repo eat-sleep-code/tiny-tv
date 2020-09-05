@@ -22,7 +22,7 @@ sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh
 
 ## Usage
 ```
-tiny-tv <options>
+tiny-tv <input> [options]
 ```
 
 ### Options
@@ -30,8 +30,21 @@ tiny-tv <options>
 + _--input_ : Select the video to be played    *(required, can be a file name or a Youtube URL)*
 + _--saveAs_ : Enter the name you would like the file saved as     *(Used if downloading from YouTube only)*
 + _--category_ : Select the category     *(This will set the subfolder, for example `--category cartoons` will use the `/home/pi/videos/cartoons` folder)*
++ _--maximumVideoHeight_ : Set the maximum height (in pixels) for downloaded videos     *(default: 480)*
 + _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file (time-intensive)    *(default: False)*
 + _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file (time-intensive)    *(default: False)*
-+ _--maximumVideoHeight_ : Set the maximum height (in pixels) for downloaded videos     *(default: 480)*
 + _--volume_ : Set the initial volume *(default: 400  `[4db]`)*
 
+### Examples
+
+To download, crop, and play a video from YouTube:
+
+```
+tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --removeVerticalBars True 
+```
+
+To play a music video from your Raspberry Pi at a volume of 6db:
+
+```
+tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 600
+```
