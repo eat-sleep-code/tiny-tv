@@ -7,7 +7,7 @@ import sys
 import time
 import youtube_dl
 
-version = "2020.09.04"
+version = '2020.09.05'
 
 # === Argument Handling ========================================================
 
@@ -18,6 +18,7 @@ parser.add_argument('--category', dest='category', help='Select the category', t
 parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for the video', type=int) 
 parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)', type=bool)
 parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool)
+parser.add_argument('--resize', dest='resize', help='Resize but do not crop', type=bool)
 parser.add_argument('--volume', dest='volume', help='Set the initial volume', type=int)
 args = parser.parse_args()
 
@@ -53,6 +54,12 @@ if removeVerticalBars != True:
 removeHorizontalBars = args.removeHorizontalBars or False
 if removeHorizontalBars != True:
 	removeHorizontalBars = False
+
+# ------------------------------------------------------------------------------
+
+resize = args.resize or False
+if resize != True:
+	resize = False
 
 # ------------------------------------------------------------------------------
 
@@ -142,26 +149,36 @@ try:
 
 		if removeVerticalBars == True:
 			print(' Starting removal of vertical black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 27 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 			os.remove(videoCategoryFolder + video)
 			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 			
 		elif removeHorizontalBars == True:
 			print(' Starting removal of horizontal black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 27 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
 			os.remove(videoCategoryFolder + video)
 			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
-	
+
+		# --- Resize only ------------------------------------------------------
+
+		if removeVerticalBars == True:
+			print(' Starting resize to maximum video height (this will take a while)... ')
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 27 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+			os.remove(videoCategoryFolder + video)
+			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		
 		# --- Playback ---------------------------------------------------------
 
 		playCount = 0
 		while playCount >= 0:
 			playCount += 1
-			print(' Starting playback ' + str(playCount) + '...')
+			print('\n Starting playback ' + str(playCount) + '...')
 			videoFullPath = videoCategoryFolder + str(video)
 			subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+			time.sleep(10)
 			
 		sys.exit(0)
 
