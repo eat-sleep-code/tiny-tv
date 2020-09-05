@@ -37,14 +37,27 @@ tiny-tv <input> [options]
 
 ### Examples
 
-To download, crop, and play a video from YouTube:
+#### To download, crop, and play a video from YouTube:
 
 ```
 tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --removeVerticalBars True 
 ```
 
-To play a music video from your Raspberry Pi at a volume of 6db:
+The default video height is 480px.  This is an ideal resolution for a true Tiny TV.  If you are utilizing a more powerful Raspberry Pi and a higher resolution screen, you may alter the maximum video height.
+
+```
+tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --maximumVideoHeight 1080
+```
+
+#### To play a music video from your Raspberry Pi at a volume of 6db:
 
 ```
 tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 600
 ```
+
+Alternatively, you can type the video subfolder instead of using the category argument:
+
+```
+tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 600
+```
+
