@@ -7,7 +7,7 @@ import sys
 import time
 import youtube_dl
 
-version = "2020.09.03"
+version = "2020.09.04"
 
 # === Argument Handling ========================================================
 
@@ -15,19 +15,20 @@ parser = argparse.ArgumentParser()
 parser.add_argument(dest='input', help='Select the video to be played', type=str)
 parser.add_argument('--saveAs', dest='saveAs', help='Enter the name you would like the file saved as', type=str) # USED IF DOWNLOADING FROM YOUTUBE ONLY
 parser.add_argument('--category', dest='category', help='Select the category', type=str)
+parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for the video', type=int) 
 parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)', type=bool)
 parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool)
-parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for the video', type=int) 
 parser.add_argument('--volume', dest='volume', help='Set the initial volume', type=int)
-
 args = parser.parse_args()
 
 
 input = args.input or ''
 
+# ------------------------------------------------------------------------------
 
 saveAs = args.saveAs or 'YOUTUBEID'
 
+# ------------------------------------------------------------------------------
 
 maximumVideoHeight = args.maximumVideoHeight = 480
 try:
@@ -35,21 +36,25 @@ try:
 except:
 	maximumVideoHeight = 480
 
+# ------------------------------------------------------------------------------
 
 category = args.category or ''
 videoFolder = '/home/pi/videos/'
 videoCategoryFolder = videoFolder + category + '/'
 
+# ------------------------------------------------------------------------------
 
 removeVerticalBars = args.removeVerticalBars or False
 if removeVerticalBars != True:
 	removeVerticalBars = False
 
+# ------------------------------------------------------------------------------
 
 removeHorizontalBars = args.removeHorizontalBars or False
 if removeHorizontalBars != True:
 	removeHorizontalBars = False
 
+# ------------------------------------------------------------------------------
 
 volume = args.volume or 400
 try:
@@ -57,6 +62,7 @@ try:
 except:
 	volume = 400
 
+# ------------------------------------------------------------------------------
 
 playCount = 0
 
@@ -82,9 +88,6 @@ def getVideoPath(inputPath):
 		quit()
 	else:
 		return inputPath
-
-		
-# ------------------------------------------------------------------------------
 
 
 # === Tiny TV ==================================================================
@@ -139,14 +142,14 @@ try:
 
 		if removeVerticalBars == True:
 			print(' Starting removal of vertical black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/9*16:ih,scale=-2:' + str(maximumVideoHeight) + '" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 			os.remove(videoCategoryFolder + video)
 			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 			
 		elif removeHorizontalBars == True:
 			print(' Starting removal of horizontal black bars (this will take a while)... ')
-			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + '" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
+			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 23 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
 			os.remove(videoCategoryFolder + video)
 			os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
