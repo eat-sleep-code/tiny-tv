@@ -163,7 +163,7 @@ try:
 
 		# --- Resize only ------------------------------------------------------
 
-		if removeVerticalBars == True:
+		if removeVerticalBars == True and removeVerticalBars == False and removeHorizontalBars == False:
 			print(' Starting resize to maximum video height (this will take a while)... ')
 			subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 27 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 			os.remove(videoCategoryFolder + video)
