@@ -1,9 +1,10 @@
+from datetime import datetime
+from time import sleep
 import argparse
 import os
 import subprocess
 import shutil
 import sys
-import time
 import youtube_dl
 
 version = '2020.09.05'
@@ -143,14 +144,14 @@ try:
 
 	if removeVerticalBars == True:
 		print(' Starting removal of vertical black bars (this will take a while)... ')
-		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 27 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 30 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 		
 	elif removeHorizontalBars == True:
 		print(' Starting removal of horizontal black bars (this will take a while)... ')
-		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 27 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
+		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 30 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
@@ -159,7 +160,7 @@ try:
 
 	if resize == True and removeVerticalBars == False and removeHorizontalBars == False:
 		print(' Starting resize to maximum video height (this will take a while)... ')
-		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 27 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf 30 -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
 		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
@@ -169,10 +170,10 @@ try:
 	playCount = 0
 	while playCount >= 0:
 		playCount += 1
-		print('\n Starting playback ' + str(playCount) + '...')
+		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
 		videoFullPath = videoCategoryFolder + str(video)
 		subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
-		time.sleep(10)
+		sleep(5)
 		
 	sys.exit(0)
 
