@@ -31,7 +31,7 @@ saveAs = args.saveAs or 'YOUTUBEID'
 
 # ------------------------------------------------------------------------------
 
-maximumVideoHeight = args.maximumVideoHeight = 480
+maximumVideoHeight = args.maximumVideoHeight or 480
 try:
 	maximumVideoHeight = int(maximumVideoHeight)
 except:
