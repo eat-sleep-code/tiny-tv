@@ -126,14 +126,26 @@ try:
 			downloadHeight = 2160
 		elif maximumVideoHeight >= 1080: # Minimum Raspberry Pi 3B+
 			downloadHeight = 1080
-		youtubeDownloadOptions = { 
-			'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
-			'format': 'best[height=' + str(downloadHeight) + ']'
-		}
-		with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
-			info = youtubeDownload.extract_info(input)
-			video = info.get('id', None) + '.' + info.get('ext', None)
-			
+
+		try:
+			youtubeDownloadOptions = { 
+				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
+				'format': 'best[height=' + str(downloadHeight) + ']'
+			}
+			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
+				info = youtubeDownload.extract_info(input)
+				video = info.get('id', None) + '.' + info.get('ext', None)
+		except Exception as ex:
+			print(' Fallback video... ')
+			youtubeDownloadOptions = { 
+				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
+				'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
+			}
+			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
+				info = youtubeDownload.extract_info(input)
+				video = info.get('id', None) + '.' + info.get('ext', None)
+			pass
+
 		print(' Setting the owner of the file to current user...')
 		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 		if saveAs != 'YOUTUBEID':
