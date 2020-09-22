@@ -98,9 +98,9 @@ Consider your case design, some case construction steps may be inserted before, 
 
 #### Power Leads
 
-1) Trim the end from a red jumper wire, leaving the female end intact.  Solder the red wire to either Pin 2 or Pin 4 of the Raspberry Pi Zero.
+1) Trim the end from a red jumper wire, leaving the female end intact.  Solder the red wire to either [Pin 2 or Pin 4](https://pinout.xyz/pinout/5v_power) of the Raspberry Pi Zero.
 
-1) Trim the end from a black jumper wire, leaving the female end intact.  Solder the black wire to Pin 39 of the Raspberry Pi Zero.
+1) Trim the end from a black jumper wire, leaving the female end intact.  Solder the black wire to [Pin 39](https://pinout.xyz/pinout/ground) of the Raspberry Pi Zero.
 
 #### Audio Amplifiers
 1) Solder the header pins _and_ speaker posts to each Audio Amplifier.
