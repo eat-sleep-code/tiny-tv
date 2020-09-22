@@ -1,7 +1,5 @@
 # Tiny TV
 
-
----
 ## Getting Started
 
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
@@ -70,3 +68,93 @@ If you are using a USB audio device you may need to edit the `/usr/share/alsa/al
 defaults.ctl.card 1
 defaults.pcm.card 1
 ```
+
+## Building Your Own Tiny TV
+
+### Bill of Materials
+
+- 1x [Raspberry Pi Zero W](#) (without headers!)
+- 1x [iUniker 2.8" 640x480 60fps Display](https://smile.amazon.com/Raspberry-iUniker-2-8-inch-Resolution-Touchscreen/dp/B07H8ZY89H)
+- 2x [90&deg; Down Angle Micro USB Plug](https://smile.amazon.com/Degree-Extension-Adapter-Charger-Adaptor/dp/B07C2K65NK) 
+- 1x [Sabrent USB External Stereo Sound Adapter](https://smile.amazon.com/Sabrent-External-Adapter-Windows-AU-MMSA/dp/B00IRVQ0F8)
+- 1x [90&deg; Right Angle Male Plug To Bare Open End TRS 3-Pole &#8539;"/3.5&#13212; Plug](https://smile.amazon.com/Fancasee-Replacement-Connector-Headphone-Earphone/dp/B08546Q38G)
+- 2x [Adafruit Mono 2.5W Class D Audio Amplifier - PAM8302](https://www.adafruit.com/product/2130)
+- 2x [Dayton Audio CE Series CE32A-8 1.25" Speaker](https://smile.amazon.com/Dayton-Audio-CE32A-8-Mini-Speaker/dp/B00BYE9AKM)
+- 1x [Assorted Jumper Wires](https://smile.amazon.com/IZOKEE-Solderless-Breadboard-Arduino-Project/dp/B08151TQHG)
+- 1x [Assorted Heat Shrink Tubing](https://smile.amazon.com/270-pcs-Adhesive-Assortment-MILAPEAK/dp/B0771K1Z7Q)
+- 1x Quality USB extension cable 
+- Solder and soldering iron
+
+### General Instruction for Assembly of Electronic Components
+
+#### Before You Start
+Consider your case design, some case construction steps may be inserted before, in between, or after any of the steps below as appropriate.   We constructed our case from hobby-grade walnut and basswood.   
+
+#### The Screen and Pi
+1) Attach the screen to the Raspberry Pi Zero and install the software, following the manufacturer's [instructions](https://github.com/tianyoujian/MZDPI).
+
+#### Power Leads
+
+1) Trim the end from a red jumper wire, leaving the female end intact.  Solder the red wire to either Pin 2 or Pin 4 of the Raspberry Pi Zero.
+
+1) Trim the end from a black jumper wire, leaving the female end intact.  Solder the black wire to Pin 39 of the Raspberry Pi Zero.
+
+#### Audio Amplifiers
+1) Solder the header pins _and_ speaker posts to each Audio Amplifier.
+
+1) Create two Y jumper cables for the amplifier power and ground:   
+    - Trim the end from a red jumper wire, leaving the __male__ end intact.   
+
+    - Trim the ends from two red jumper wires, leaving the __female__ end intact.    
+    
+    - Solder the two red female-ended cables to the red male-ended -- forming a Y cable with two female plugs on one end and a male plug on the other end.   
+    
+    - Slide a length of heat shrink tubing over the solder joint and shrink it using either a torch on low heat or a heat gun.
+    
+    - Trim the end from a black jumper wire, leaving the __male__ end intact.   
+    
+    - Trim the ends from two black jumper wires, leaving the __female__ end intact.    
+    
+    - Solder the two black female-ended cables to the red male-ended -- forming a Y cable with two female plugs on one end and a male plug on the other end.  
+    
+    - Slide a length of heat shrink tubing over the solder joint and shrink it using either a torch on low heat or a heat gun.
+    
+1) Attach a female plug of the black Y ground jumper cable to the GND (ground) pin of __each__ audio amplifier board.
+
+1) Attach a female plug of the red Y power jumper cable to the VIN (voltage in) pin of __each__ audio amplifier board.
+
+#### Audio Source 
+1) Create a Y audio distribution cable.
+    - Trim the end of a red jumper wire, leaving the __female__ end intact.  Solder the wire end to the red wire of the 90&deg; audio plug.
+    
+    - Trim the end of a white jumper wire, leaving the __female__ end intact.  Solder the wire end to the white wire of the 90&deg; speaker plug.
+    
+    - Trim the end of two black jumper wires, leaving the __female__ ends intact.  Solder the wire ends to the ground/silver wire of the 90&deg; speaker plug, forming a Y.
+    
+    - Slide a piece of heat shrink tubing over each individual solder joint and shrink it.
+
+1) Attach the female plug of the audio red wire to the A+ pin of one audio board.   
+
+1) Attach the female plug of the audio white wire to the A+ pin of the other audio board.   
+
+1) Attach the female plug of each audio wire to the A- pin of each audio amplifier board.  
+
+1) Plug the &#8539;"/3.5&#13212; jack of the audio plug into the green headphone port of the USB audio adapter.   
+
+1) Plug the USB audio adapter into one of the 90&deg; down angle micro USB cables and plug the USB cable into the center plug of the Pi Zero W.
+
+#### Audio Output
+1) Trim the end of two red jumper wires, leaving the female ends intact.  Solder one red wire to the appropriate post of each speaker.
+
+1) Trim the end of two white jumper wires, leaving the female ends intact.   Solder one white wire to the appropriate post of each speaker.
+
+1) Attach the female plug of each speaker's red wire to the + speaker post of each audio board.   
+
+1) Attach the female plug of each speaker's white wire to the - speaker post of each audio amplifier board.   
+
+#### Final Connections
+1) Connect the male ends of the power Y adapters to the corresponding leads you solder to the Raspberry Pi.
+
+2) Connect the second 90&deg; down micro USB cable to USB extension cable.
+
+3) Connect the second 90&deg; down micro USB cable to the power outer micro USB port of the Raspberry Pi.
