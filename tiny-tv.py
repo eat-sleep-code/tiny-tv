@@ -122,7 +122,7 @@ try:
 		downloadHeight = 720
 		if maximumVideoHeight >= 4320: # Future product
 			downloadHeight = 4320
-		elif maximumVideoHeight >= 2160: # Minimum Raspberry Pi 4
+		elif maximumVideoHeight >= 2160: # Minimum Raspberry Pi 4B
 			downloadHeight = 2160
 		elif maximumVideoHeight >= 1080: # Minimum Raspberry Pi 3B+
 			downloadHeight = 1080
@@ -136,10 +136,10 @@ try:
 				info = youtubeDownload.extract_info(input)
 				video = info.get('id', None) + '.' + info.get('ext', None)
 		except Exception as ex:
-			print(' Fallback video... ')
+			print(' Falling back to best quality video... ')
 			youtubeDownloadOptions = { 
 				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
-				'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4'
+				'format': 'best'
 			}
 			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
 				info = youtubeDownload.extract_info(input)
