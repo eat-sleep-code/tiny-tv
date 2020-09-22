@@ -69,4 +69,5 @@ If you are using a USB audio device you may need to edit the `/usr/share/alsa/al
 Set the following values:
 
 `defaults.ctl.card 1`
+
 `defaults.pcm.card 1`
