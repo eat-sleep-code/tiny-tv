@@ -7,6 +7,8 @@
 - Connect your display to your Raspberry Pi and configure according to the manufacturer's instructions
 - Ensure audio output is correctly configured.
 
+---
+
 ## Installation
 
 Installation of the program, as well as any software prerequisites, can be completed with the following two-line install script.
@@ -59,6 +61,7 @@ Alternatively, you can type the video subfolder instead of using the category ar
 ```
 tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 600
 ```
+---
 
 ## Audio Settings
 
