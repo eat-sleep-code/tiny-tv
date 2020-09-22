@@ -76,7 +76,7 @@ defaults.pcm.card 1
 
 ### Bill of Materials
 
-- 1x [Raspberry Pi Zero W](#) (without headers!)
+- 1x [Raspberry Pi Zero W](https://www.adafruit.com/product/3400) (without headers!)
 - 1x [iUniker 2.8" 640x480 60fps Display](https://smile.amazon.com/Raspberry-iUniker-2-8-inch-Resolution-Touchscreen/dp/B07H8ZY89H)
 - 2x [90&deg; Down Angle Micro USB Plug](https://smile.amazon.com/Degree-Extension-Adapter-Charger-Adaptor/dp/B07C2K65NK) 
 - 1x [Sabrent USB External Stereo Sound Adapter](https://smile.amazon.com/Sabrent-External-Adapter-Windows-AU-MMSA/dp/B00IRVQ0F8)
@@ -85,7 +85,7 @@ defaults.pcm.card 1
 - 2x [Dayton Audio CE Series CE32A-8 1.25" Speaker](https://smile.amazon.com/Dayton-Audio-CE32A-8-Mini-Speaker/dp/B00BYE9AKM)
 - 1x [Assorted Jumper Wires](https://smile.amazon.com/IZOKEE-Solderless-Breadboard-Arduino-Project/dp/B08151TQHG)
 - 1x [Assorted Heat Shrink Tubing](https://smile.amazon.com/270-pcs-Adhesive-Assortment-MILAPEAK/dp/B0771K1Z7Q)
-- 1x Quality USB extension cable 
+- 1x USB extension cable 
 - Solder and soldering iron
 
 ### General Instruction for Assembly of Electronic Components
