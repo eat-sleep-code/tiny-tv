@@ -24,7 +24,7 @@ sudo chmod +x tiny-tv.py
 cd ~
 echo ''
 echo -e '\033[93mSetting up aliases... \033[0m'
-sudo touch ~./bash_aliases
+sudo touch ~/.bash_aliases
 sudo sed -i '/\b\(function tiny-tv\)\b/d' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv { sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 echo -e 'You may use \e[1mtiny-tv <options>\e[0m to launch the program.'
