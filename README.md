@@ -103,7 +103,7 @@ Consider your case design, some case construction steps may be inserted before, 
 
 3) Connect the display and the Raspberry Pi Zero W together.
 
-![Image of Yaktocat](docs/pi-mounted-on-display.jpg)
+![Image of Yaktocat](docs/pi-mounted-on-display.png)
 
 4) Replace the micro SD card and boot up the Raspberry Pi.
 
