@@ -6,6 +6,7 @@
   - Expand your filesystem
   - Set your locale and keyboard options
   - Set up your WiFi connection
+  - Enable SSH
   - Set your memory split to at least 128MB
 - Connect your display to your Raspberry Pi and configure according to the manufacturer's instructions
 - Ensure audio output is correctly configured.
@@ -98,17 +99,22 @@ defaults.pcm.card 1
 Consider your case design, some case construction steps may be inserted before, in between, or after any of the steps below as appropriate.   We constructed our case from hobby-grade walnut and basswood.   
 
 #### The Screen and Pi
+
+1) Complete the steps outlined in the [Getting Started](#getting-started) section.
+
+1) Install the software as outlined in the [Installation](#installation) section.
+
 1) Remove your micro SD card from the Raspberry Pi.
 
-2) Solder a female GPIO header to the __rear/bottom__ of the Raspberry Pi Zero W so that the Pi can be removed in the future.  Trim any excess length of the pins after soldering.
+1) Solder a female GPIO header to the __rear/bottom__ of the Raspberry Pi Zero W so that the Pi can be removed in the future.  Trim any excess length of the pins after soldering.
 
-3) Connect the display and the Raspberry Pi Zero W together.
+1) Connect the display and the Raspberry Pi Zero W together.
 
 ![Image of Yaktocat](docs/pi-mounted-on-display.png)
 
-4) Replace the micro SD card and boot up the Raspberry Pi.
+1) Replace the micro SD card and boot up the Raspberry Pi.
 
-5) Install the software, following the manufacturer's [instructions](https://github.com/tianyoujian/MZDPI).
+1) Install the software, following the manufacturer's [instructions](https://github.com/tianyoujian/MZDPI).
 
    ```
    cd ~/
@@ -118,7 +124,7 @@ Consider your case design, some case construction steps may be inserted before, 
    sudo ./mzdpi-vga-autoinstall-online
    sudo reboot
    ```
-6) Remove your micro SD card from the Raspberry Pi.
+1) Remove your micro SD card from the Raspberry Pi.
 
 #### Power Leads
 
