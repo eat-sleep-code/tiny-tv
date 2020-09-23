@@ -80,7 +80,9 @@ defaults.pcm.card 1
 
 ### Bill of Materials
 
-- 1x [Raspberry Pi Zero W](https://www.adafruit.com/product/3400) (without headers!)
+- 1x [Raspberry Pi Zero W](https://www.adafruit.com/product/3400)
+  - Do not purchase a Raspberry Pi Zero (non-W) as you need the wireless connectivity.
+  - Do not purchase a Raspberry Pi Zero WH, as the headers it includes are the incorrect type and position. 
 - 1x [Female GPIO Header](https://smile.amazon.com/Geekworm-Stacking-Raspberry-Specifications-Extender/dp/B0827THC7R)
 - 1x [iUniker 2.8" 640x480 60fps Display](https://smile.amazon.com/Raspberry-iUniker-2-8-inch-Resolution-Touchscreen/dp/B07H8ZY89H)
 - 2x [90&deg; Down Angle Micro USB Plug](https://smile.amazon.com/Degree-Extension-Adapter-Charger-Adaptor/dp/B07C2K65NK) 
@@ -128,9 +130,11 @@ Consider your case design, some case construction steps may be inserted before, 
 
 #### Power Leads
 
-1) Trim the end from a red jumper wire, leaving the female end intact.  Solder the red wire to either [Pin 2 or Pin 4](https://pinout.xyz/pinout/5v_power) of the Raspberry Pi Zero.
+If the header pins of your female GPIO header are too short you will need solder the power leads for the amplifiers directly to the GPIO pins:  
 
-1) Trim the end from a black jumper wire, leaving the female end intact.  Solder the black wire to [Pin 39](https://pinout.xyz/pinout/ground) of the Raspberry Pi Zero.
+  1) Trim the end from a red jumper wire, leaving the female end intact.  Solder the red wire to either [Pin 2 or Pin 4](https://pinout.xyz/pinout/5v_power) of the Raspberry Pi Zero.
+    
+  1) Trim the end from a black jumper wire, leaving the female end intact.  Solder the black wire to [Pin 39](https://pinout.xyz/pinout/ground) of the Raspberry Pi Zero.
 
 #### Audio Amplifiers
 1) Solder the header pins _and_ speaker posts to each Audio Amplifier.
