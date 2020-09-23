@@ -3,9 +3,10 @@
 ## Getting Started
 
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
+  - Expand your filesystem
   - Set your locale and keyboard options
   - Set up your WiFi connection
-  - Set your memory allocation split to at least 128MB
+  - Set your memory split to at least 128MB
 - Connect your display to your Raspberry Pi and configure according to the manufacturer's instructions
 - Ensure audio output is correctly configured.
 
