@@ -118,7 +118,7 @@ Consider your case design, some case construction steps may be inserted before, 
     
     - Trim the ends from two black jumper wires, leaving the __female__ end intact.    
     
-    - Solder the two black female-ended cables to the red male-ended -- forming a Y cable with two female plugs on one end and a male plug on the other end.  
+    - Solder the two black female-ended cables to the black male-ended -- forming a Y cable with two female plugs on one end and a male plug on the other end.  
     
     - Slide a length of heat shrink tubing over the solder joint and shrink it using either a torch on low heat or a heat gun.
     
@@ -147,16 +147,16 @@ Consider your case design, some case construction steps may be inserted before, 
 1) Plug the USB audio adapter into one of the 90&deg; down angle micro USB cables and plug the USB cable into the center plug of the Pi Zero W.
 
 #### Audio Output
-1) Trim the end of two red jumper wires, leaving the female ends intact.  Solder one red wire to the appropriate post of each speaker.
+1) Trim the end of two red jumper wires, leaving the __female__ ends intact.  Solder one red wire to the appropriate post of each speaker.
 
-1) Trim the end of two white jumper wires, leaving the female ends intact.   Solder one white wire to the appropriate post of each speaker.
+1) Trim the end of two white jumper wires, leaving the __female__ ends intact.   Solder one white wire to the appropriate post of each speaker.
 
 1) Attach the female plug of each speaker's red wire to the + speaker post of each audio board.   
 
 1) Attach the female plug of each speaker's white wire to the - speaker post of each audio amplifier board.   
 
 #### Final Connections
-1) Connect the male ends of the power Y adapters to the corresponding leads you solder to the Raspberry Pi.
+1) Connect the male ends of the power Y adapters to the corresponding leads you soldered to the Raspberry Pi at the beginning of this guide.
 
 2) Connect the second 90&deg; down micro USB cable to USB extension cable.
 
