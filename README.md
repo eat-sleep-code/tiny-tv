@@ -77,6 +77,7 @@ defaults.pcm.card 1
 ### Bill of Materials
 
 - 1x [Raspberry Pi Zero W](https://www.adafruit.com/product/3400) (without headers!)
+- 1x [Female GPIO Header](https://smile.amazon.com/Geekworm-Stacking-Raspberry-Specifications-Extender/dp/B0827THC7R)
 - 1x [iUniker 2.8" 640x480 60fps Display](https://smile.amazon.com/Raspberry-iUniker-2-8-inch-Resolution-Touchscreen/dp/B07H8ZY89H)
 - 2x [90&deg; Down Angle Micro USB Plug](https://smile.amazon.com/Degree-Extension-Adapter-Charger-Adaptor/dp/B07C2K65NK) 
 - 1x [Sabrent USB External Stereo Sound Adapter](https://smile.amazon.com/Sabrent-External-Adapter-Windows-AU-MMSA/dp/B00IRVQ0F8)
@@ -94,7 +95,27 @@ defaults.pcm.card 1
 Consider your case design, some case construction steps may be inserted before, in between, or after any of the steps below as appropriate.   We constructed our case from hobby-grade walnut and basswood.   
 
 #### The Screen and Pi
-1) Attach the screen to the Raspberry Pi Zero and install the software, following the manufacturer's [instructions](https://github.com/tianyoujian/MZDPI).
+1) Remove your micro SD card from the Raspberry Pi.
+
+2) Solder a female GPIO header to the __rear/bottom__ of the Raspberry Pi Zero W so that the Pi can be removed in the future.  Trim any excess length of the pins after soldering.
+
+3) Connect the display and the Raspberry Pi Zero W together.
+
+![Image of Yaktocat](docs/pi-mounted-on-display.jpg)
+
+4) Replace the micro SD card and boot up the Raspberry Pi.
+
+5) Install the software, following the manufacturer's [instructions](https://github.com/tianyoujian/MZDPI).
+
+   ```
+   cd ~/
+   git clone https://github.com/tianyoujian/MZDPI.git
+   cd MZDPI/vga
+   sudo chmod +x mzdpi-vga-autoinstall-online
+   sudo ./mzdpi-vga-autoinstall-online
+   sudo reboot
+   ```
+6) Remove your micro SD card from the Raspberry Pi.
 
 #### Power Leads
 
@@ -161,3 +182,7 @@ Consider your case design, some case construction steps may be inserted before, 
 2) Connect the second 90&deg; down micro USB cable to USB extension cable.
 
 3) Connect the second 90&deg; down micro USB cable to the power outer micro USB port of the Raspberry Pi.
+
+4) Replace the micro SD card and boot up the Raspberry Pi.
+
+5) Connect the USB extension cable to a power source and enjoy!

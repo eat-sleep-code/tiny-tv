@@ -1,0 +1,1 @@
+Complete assembly and usage instructions are located [here](https://github.com/eat-sleep-code/tiny-tv).
