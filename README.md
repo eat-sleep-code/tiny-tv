@@ -81,8 +81,8 @@ defaults.pcm.card 1
 ### Bill of Materials
 
 - 1x [Raspberry Pi Zero W](https://www.adafruit.com/product/3400)
-  - Do not purchase a Raspberry Pi Zero (non-W) as you need the wireless connectivity.
-  - Do not purchase a Raspberry Pi Zero WH, as the headers it includes are the incorrect type and position. 
+  - Do not purchase a Raspberry Pi Zero (non-W) &ndash; you need the wireless connectivity.
+  - Do not purchase a Raspberry Pi Zero WH &ndash; the headers it includes are the incorrect type and position. 
 - 1x [Female GPIO Header](https://smile.amazon.com/Geekworm-Stacking-Raspberry-Specifications-Extender/dp/B0827THC7R)
 - 1x [iUniker 2.8" 640x480 60fps Display](https://smile.amazon.com/Raspberry-iUniker-2-8-inch-Resolution-Touchscreen/dp/B07H8ZY89H)
 - 2x [90&deg; Down Angle Micro USB Plug](https://smile.amazon.com/Degree-Extension-Adapter-Charger-Adaptor/dp/B07C2K65NK) 
