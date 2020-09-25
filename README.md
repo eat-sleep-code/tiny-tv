@@ -1,5 +1,11 @@
 # Tiny TV
 
+Do you remember the classic console TV's of the second half of the last century.  The ones that were a piece of furniture and took up a large portion of a room?   Now you can build one that has that same classic look --  but only fills up a corner of your desk.
+
+[![Tiny TV (featuring Bugs Bunny and Daffy Duck)](https://yt-embed.herokuapp.com/embed?v=es5J1oA_HFo)](https://www.youtube.com/watch?v=es5J1oA_HFo "Tiny TV - Cartoon Example")
+
+[![Tiny TV (featuring Becky G)](https://yt-embed.herokuapp.com/embed?v=-g9xvwmz9Os)](https://www.youtube.com/watch?v=-g9xvwmz9Os "Tiny TV - Music Video Example")
+
 ## Getting Started
 
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
@@ -40,6 +46,24 @@ tiny-tv <input> [options]
 + _--resize_ : Resize the video to the maximum video height.  This is a time-intensive process.
 + _--volume_ : Set the initial volume *(default: 100  `[1db]`)*
 + _--loop_ : Set whether video plays continuously in a loop *(default: True)*
+
+### Playback Controls
+
+You can control the device from either a Bluetooth keyboard or via an SSH connection from another machine.   
+
+|Key|Action|
+|---|---|
+| - | Decrease Volume |
+| + | Increase Volume |
+| Space or p | Pause/Resume |
+| q | Exit |
+| 1 | Increase Speed |
+| 2 | Decrease Speed |
+| Left | Seek -30 |
+| Right | Seek +30 |
+| Down | Seek -600 |
+| Up | Seek +600 |
+
 
 ### Examples
 
@@ -107,13 +131,14 @@ Consider your case design, some case construction steps may be inserted before, 
 
 1) Install the software as outlined in the [Installation](#installation) section.
 
-1) Remove your micro SD card from the Raspberry Pi.
+1) Remove your micro SD card from the Raspberry Pi.   The heat from soldering the adjacent GPIO header can potentially damage the SD card.
 
-1) Solder a female GPIO header to the __rear/bottom__ of the Raspberry Pi Zero W so that the Pi can be removed in the future.  Trim any excess length of the pins after soldering.
+1) Solder a female GPIO header to the __rear/bottom__ of the Raspberry Pi Zero W so that the Pi can be removed in the future.  
 
 1) Connect the display and the Raspberry Pi Zero W together.
 
-![Image of Yaktocat](docs/pi-mounted-on-display.png)
+![Screen attached to Raspberry Pi Zero W](docs/tiny-tv-screen-assembly-rear.jpg)
+
 
 1) Replace the micro SD card and boot up the Raspberry Pi.
 
@@ -157,6 +182,9 @@ If the header pins of your female GPIO header are too short you will need solder
     
     - Slide a length of heat shrink tubing over the solder joint and shrink it using either a torch on low heat or a heat gun.
     
+
+![Audio amplifiers and speakers](docs/tiny-tv-audio-amplifiers-and-speakers.jpg)
+    
 1) Attach a female plug of the black Y ground jumper cable to the GND (ground) pin of __each__ audio amplifier board.
 
 1) Attach a female plug of the red Y power jumper cable to the VIN (voltage in) pin of __each__ audio amplifier board.
@@ -182,6 +210,9 @@ If the header pins of your female GPIO header are too short you will need solder
 1) Plug the USB audio adapter into one of the 90&deg; down angle micro USB cables and plug the USB cable into the center plug of the Pi Zero W.
 
 #### Audio Output
+
+![Top down view of the Tiny TV's internal assembly](docs/tiny-tv-inner-assembly-top-down.jpg)
+
 1) Trim the end of two red jumper wires, leaving the __female__ ends intact.  Solder one red wire to the appropriate post of each speaker.
 
 1) Trim the end of two white jumper wires, leaving the __female__ ends intact.   Solder one white wire to the appropriate post of each speaker.
@@ -190,7 +221,10 @@ If the header pins of your female GPIO header are too short you will need solder
 
 1) Attach the female plug of each speaker's white wire to the - speaker post of each audio amplifier board.   
 
-#### Final Connections
+#### Making Connections
+
+![Front view of the Tiny TV's internal assembly](docs/tiny-tv-inner-assembly.jpg)
+
 1) Connect the male ends of the power Y adapters to the corresponding leads you soldered to the Raspberry Pi at the beginning of this guide.
 
 2) Connect the second 90&deg; down micro USB cable to USB extension cable.
@@ -199,4 +233,21 @@ If the header pins of your female GPIO header are too short you will need solder
 
 4) Replace the micro SD card and boot up the Raspberry Pi.
 
-5) Connect the USB extension cable to a power source and enjoy!
+5) Connect the USB extension cable to a power source and test the device.
+
+![Front view of the Tiny TV's internal assembly](docs/tiny-tv-power-up-test.jpg)
+
+#### Final Assembly
+
+The case design is up to you.   Below are a few images of our design for inspiration.
+
+![Front view of the Tiny TV's internal assembly](docs/tiny-tv-outer-assembly.jpg)
+
+![Front view of the Tiny TV's internal assembly](docs/tiny-tv-outer-assembly-rear.jpg)
+
+Finish assembling your case and put your Tiny TV to use.   
+
+![Tiny TV (featuring Bugs Bunny and Daffy Duck)](docs/tiny-tv-assembled-front.jpg)
+
+![Front view of the Tiny TV's internal assembly](docs/tiny-tv-assembled-rear.jpg)
+
