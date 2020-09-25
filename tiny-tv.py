@@ -16,11 +16,11 @@ parser.add_argument(dest='input', help='Select the video to be played', type=str
 parser.add_argument('--saveAs', dest='saveAs', help='Enter the name you would like the file saved as', type=str) # USED IF DOWNLOADING FROM YOUTUBE ONLY
 parser.add_argument('--category', dest='category', help='Select the category', type=str)
 parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for the video', type=int) 
-parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)', type=bool)
-parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool)
-parser.add_argument('--resize', dest='resize', help='Resize but do not crop', type=bool)
+parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)')
+parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)')
+parser.add_argument('--resize', dest='resize', help='Resize but do not crop')
 parser.add_argument('--volume', dest='volume', help='Set the initial volume', type=int)
-parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop', type=bool)
+parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop')
 args = parser.parse_args()
 
 
@@ -47,26 +47,33 @@ videoCategoryFolder = videoFolder + category + '/'
 # ------------------------------------------------------------------------------
 
 removeVerticalBars = args.removeVerticalBars or False
-if removeVerticalBars != True:
+if str(removeVerticalBars) == "True":
+	removeVerticalBars = True
+else:
 	removeVerticalBars = False
 
 # ------------------------------------------------------------------------------
 
 removeHorizontalBars = args.removeHorizontalBars or False
-if removeHorizontalBars != True:
+if str(removeHorizontalBars) == "True":
+	removeHorizontalBars = True
+else:
 	removeHorizontalBars = False
 
 # ------------------------------------------------------------------------------
 
 resize = args.resize or False
-if resize != True:
+if str(resize) == "True":
+	resize = True
+else:
 	resize = False
-
 
 # ------------------------------------------------------------------------------
 
 loop = args.loop or True
-if loop != False:
+if str(loop) == "False":
+	loop = False
+else:
 	loop = True
 
 # ------------------------------------------------------------------------------
@@ -192,13 +199,15 @@ try:
 	# --- Playback ---------------------------------------------------------
 
 	playCount = 0
-	while playCount == 0 or loop == True:
+	while playCount >= 0:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
 		videoFullPath = videoCategoryFolder + str(video)
 		subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
-		sleep(5)
-		
+		if loop == False:
+			break
+		else:
+			sleep(5)
 		
 	sys.exit(0)
 
