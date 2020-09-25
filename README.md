@@ -38,7 +38,8 @@ tiny-tv <input> [options]
 + _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file.  This time-intensive process will also resize the video to the maximum video height.   *(default: False)*
 + _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file.  This time-intensive process will also resize the video to the maximum video height.    *(default: False)*
 + _--resize_ : Resize the video to the maximum video height.  This is a time-intensive process.
-+ _--volume_ : Set the initial volume *(default: 400  `[4db]`)*
++ _--volume_ : Set the initial volume *(default: 100  `[1db]`)*
++ _--loop_ : Set whether video plays continuously in a loop *(default: True)*
 
 ### Examples
 
@@ -54,16 +55,16 @@ The default video height is 480px.  This is an ideal resolution for a true Tiny 
 tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --maximumVideoHeight 1080
 ```
 
-#### To play a music video from your Raspberry Pi at a volume of 6db:
+#### To play a music video from your Raspberry Pi at a volume of 3db:
 
 ```
-tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 600
+tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 300
 ```
 
 Alternatively, you can type the video subfolder instead of using the category argument:
 
 ```
-tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 600
+tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 300
 ```
 ---
 

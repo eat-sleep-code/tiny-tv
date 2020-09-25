@@ -7,7 +7,7 @@ import shutil
 import sys
 import youtube_dl
 
-version = '2020.09.22'
+version = '2020.09.24'
 
 # === Argument Handling ========================================================
 
@@ -20,6 +20,7 @@ parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Rem
 parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool)
 parser.add_argument('--resize', dest='resize', help='Resize but do not crop', type=bool)
 parser.add_argument('--volume', dest='volume', help='Set the initial volume', type=int)
+parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop', type=bool)
 args = parser.parse_args()
 
 
@@ -61,13 +62,20 @@ resize = args.resize or False
 if resize != True:
 	resize = False
 
+
 # ------------------------------------------------------------------------------
 
-volume = args.volume or 400
+loop = args.loop or True
+if loop != False:
+	loop = True
+
+# ------------------------------------------------------------------------------
+
+volume = args.volume or 100
 try:
 	volume = int(volume)
 except:
-	volume = 400
+	volume = 100
 
 # ------------------------------------------------------------------------------
 
@@ -184,12 +192,13 @@ try:
 	# --- Playback ---------------------------------------------------------
 
 	playCount = 0
-	while playCount >= 0:
+	while playCount == 0 or loop == True:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
 		videoFullPath = videoCategoryFolder + str(video)
 		subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
 		sleep(5)
+		
 		
 	sys.exit(0)
 
