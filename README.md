@@ -251,3 +251,14 @@ Finish assembling your case and put your Tiny TV to use.
 
 ![Front view of the Tiny TV's internal assembly](docs/tiny-tv-assembled-rear.jpg)
 
+
+## Just the FAQs, ma'am
+### How big is it?   
+
+  - Maybe you should ask, "how tiny is it?".  Our design is ridiculously small at just 3.75" x 3.75" x 3.25" (95.25mm x 95.25mm x 82.55mm).   An iPhone will take up more room on your desk.
+
+### Does it just play video?
+
+  - No, it plays sound too!   As outlined above, there are two discrete audio amplifiers powering two 1.25" (32mm) speakers.   
+
+  - If you install Raspberry Pi OS desktop edition, you could use it as a ridiculously small desktop computer.   
