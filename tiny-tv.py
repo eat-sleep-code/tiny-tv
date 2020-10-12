@@ -1,13 +1,14 @@
 from datetime import datetime
 from time import sleep
 import argparse
+import glob
 import os
 import subprocess
 import shutil
 import sys
 import youtube_dl
 
-version = '2020.09.24'
+version = '2020.10.12'
 
 # === Argument Handling ========================================================
 
@@ -47,7 +48,7 @@ videoCategoryFolder = videoFolder + category + '/'
 # ------------------------------------------------------------------------------
 
 removeVerticalBars = args.removeVerticalBars or False
-if str(removeVerticalBars) == "True":
+if str(removeVerticalBars) == 'True':
 	removeVerticalBars = True
 else:
 	removeVerticalBars = False
@@ -55,7 +56,7 @@ else:
 # ------------------------------------------------------------------------------
 
 removeHorizontalBars = args.removeHorizontalBars or False
-if str(removeHorizontalBars) == "True":
+if str(removeHorizontalBars) == 'True':
 	removeHorizontalBars = True
 else:
 	removeHorizontalBars = False
@@ -63,7 +64,7 @@ else:
 # ------------------------------------------------------------------------------
 
 resize = args.resize or False
-if str(resize) == "True":
+if str(resize) == 'True':
 	resize = True
 else:
 	resize = False
@@ -71,7 +72,7 @@ else:
 # ------------------------------------------------------------------------------
 
 loop = args.loop or True
-if str(loop) == "False":
+if str(loop) == 'False':
 	loop = False
 else:
 	loop = True
@@ -124,15 +125,16 @@ try:
 	print('\n Tiny TV ' + version )
 	print('\n ----------------------------------------------------------------------\n')
 	print('\n Press [Ctrl]-C to exit. \n')
-		
-	if input.find('.') == -1 and input.find(';') == -1:
+	
+	input = input.lower().strip()
+	if input.find('.') == -1 and input.find(';') == -1 and input != 'category':
 		input = input + '.mp4'
 	video = input
 	
 	
 	# --- YouTube Download -------------------------------------------------
 
-	if input.find('youtube.com') != -1:
+	if video.find('youtube.com') != -1:
 		print(' Starting download of video... ')
 		downloadHeight = 720
 		if maximumVideoHeight >= 4320: # Future product
@@ -148,7 +150,7 @@ try:
 				'format': 'best[height=' + str(downloadHeight) + ']'
 			}
 			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
-				info = youtubeDownload.extract_info(input)
+				info = youtubeDownload.extract_info(video)
 				video = info.get('id', None) + '.' + info.get('ext', None)
 		except Exception as ex:
 			print(' Falling back to best quality video... ')
@@ -157,7 +159,7 @@ try:
 				'format': 'best'
 			}
 			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
-				info = youtubeDownload.extract_info(input)
+				info = youtubeDownload.extract_info(video)
 				video = info.get('id', None) + '.' + info.get('ext', None)
 			pass
 
@@ -202,8 +204,12 @@ try:
 	while playCount >= 0:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
-		videoFullPath = videoCategoryFolder + str(video)
-		subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+		if (video == 'category'):
+			for videoFullPath in glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True):
+				subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+		else:
+			videoFullPath = videoCategoryFolder + str(video)
+			subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
 		if loop == False:
 			break
 		else:

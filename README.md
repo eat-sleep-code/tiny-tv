@@ -37,7 +37,7 @@ tiny-tv <input> [options]
 
 ### Options
 
-+ _--input_ : Select the video to be played    *(required, can be a file name or a Youtube URL)*
++ _--input_ : Select the video to be played    *(required, can be a file name, a Youtube URL, or the word 'category')*
 + _--saveAs_ : Enter the name you would like the file saved as     *(Used if downloading from YouTube only)*
 + _--category_ : Select the category     *(This will set the subfolder, for example `--category cartoons` will use the `/home/pi/videos/cartoons` folder)*
 + _--maximumVideoHeight_ : Set the maximum height (in pixels) for downloaded videos     *(default: 480)*
@@ -89,6 +89,12 @@ Alternatively, you can type the video subfolder instead of using the category ar
 
 ```
 tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 300
+```
+
+#### To play all the cartoons in a loop:
+
+```
+tiny-tv 'category' --category 'cartoons' --volume 100
 ```
 ---
 
