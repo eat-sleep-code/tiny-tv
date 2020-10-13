@@ -9,7 +9,7 @@ sudo apt update
 
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
-sudo apt install -y git python3 python3-pip omxplayer ffmpeg fonts-freefont-ttf
+sudo apt install -y git python3 python3-pip omxplayer ffmpeg fonts-freefont-ttf screen
 sudo pip3 install keyboard youtube_dl 
 
 echo ''
@@ -27,6 +27,8 @@ echo -e '\033[93mSetting up aliases... \033[0m'
 sudo touch ~/.bash_aliases
 sudo sed -i '/\b\(function tiny-tv\)\b/d' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv { sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-persist { screen sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
 echo -e 'You may use \e[1mtiny-tv <options>\e[0m to launch the program.'
 echo ''
 echo ''

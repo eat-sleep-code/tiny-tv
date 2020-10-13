@@ -33,6 +33,8 @@ sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh
 ## Usage
 ```
 tiny-tv <input> [options]
+tiny-tv-persist <input> [options]
+tiny-tv-resume
 ```
 
 ### Options
@@ -46,6 +48,8 @@ tiny-tv <input> [options]
 + _--resize_ : Resize the video to the maximum video height.  This is a time-intensive process.
 + _--volume_ : Set the initial volume *(default: 100  `[1db]`)*
 + _--loop_ : Set whether video plays continuously in a loop *(default: True)*
+
+---
 
 ### Playback Controls
 
@@ -64,6 +68,7 @@ You can control the device from either a Bluetooth keyboard or via an SSH connec
 | Down | Seek -600 |
 | Up | Seek +600 |
 
+---
 
 ### Examples
 
@@ -96,6 +101,21 @@ tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 300
 ```
 tiny-tv 'category' --category 'cartoons' --volume 100
 ```
+
+#### Keep Tiny TV playing even after SSH session ends
+
+```
+tiny-tv-persist 'category' --music --volume 300
+```
+After the video begins playing, you may:
+1) Press __Ctrl-A__.
+1) Press __Ctrl-D__.
+1) Disconnect from your SSH session.
+
+To reconnect to the existing playback, you may:
+1) Connect via SSH
+1) Type `tiny-tv-resume`
+
 ---
 
 ## Audio Settings
@@ -106,6 +126,9 @@ If you are using a USB audio device you may need to edit the `/usr/share/alsa/al
 defaults.ctl.card 1
 defaults.pcm.card 1
 ```
+
+---
+
 
 ## Building Your Own Tiny TV
 
