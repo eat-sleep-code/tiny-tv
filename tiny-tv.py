@@ -20,7 +20,7 @@ parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set
 parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)')
 parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)')
 parser.add_argument('--resize', dest='resize', help='Resize but do not crop')
-parser.add_argument('--volume', dest='volume', help='Set the initial volume', type=int)
+parser.add_argument('--volume', dest='volume', help='Set the initial volume in decibels (-60 to 6)', type=int)
 parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop')
 args = parser.parse_args()
 
@@ -79,11 +79,18 @@ else:
 
 # ------------------------------------------------------------------------------
 
-volume = args.volume or 100
+volume = args.volume or -20
+maxVolume = 6
+minVolume = -60
+# Convert decibels to millibels
 try:
-	volume = int(volume)
+	volume = int(volume) * 100
+	if volume > maxVolume * 100:
+		volume = maxVolume * 100
+	if volume < minVolume * 100:
+		volume = minVolume * 100
 except:
-	volume = 100
+	volume = -2000
 
 # ------------------------------------------------------------------------------
 

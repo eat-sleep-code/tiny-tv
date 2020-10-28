@@ -46,7 +46,7 @@ tiny-tv-resume
 + _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file.  This time-intensive process will also resize the video to the maximum video height.   *(default: False)*
 + _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file.  This time-intensive process will also resize the video to the maximum video height.    *(default: False)*
 + _--resize_ : Resize the video to the maximum video height.  This is a time-intensive process.
-+ _--volume_ : Set the initial volume *(default: 100  `[1db]`)*
++ _--volume_ : Set the initial volume in decibels [db] *(default: -20, min: -60, max: 6`)*
 + _--loop_ : Set whether video plays continuously in a loop *(default: True)*
 
 ---
@@ -87,25 +87,25 @@ tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --
 #### To play a music video from your Raspberry Pi at a volume of 3db:
 
 ```
-tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 300
+tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 3
 ```
 
 Alternatively, you can type the video subfolder instead of using the category argument:
 
 ```
-tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 300
+tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume -10
 ```
 
 #### To play all the cartoons in a loop:
 
 ```
-tiny-tv 'category' --category 'cartoons' --volume 100
+tiny-tv 'category' --category 'cartoons' --volume 0
 ```
 
 #### Keep Tiny TV playing even after SSH session ends
 
 ```
-tiny-tv-persist 'category' --music --volume 300
+tiny-tv-persist 'category' --category 'christmas' --volume 3
 ```
 After the video begins playing, you may:
 1) Press __Ctrl-A__.
