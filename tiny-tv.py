@@ -8,7 +8,7 @@ import shutil
 import sys
 import youtube_dl
 
-version = '2020.10.12'
+version = '2020.10.27'
 
 # === Argument Handling ========================================================
 
@@ -29,7 +29,7 @@ input = args.input or ''
 
 # ------------------------------------------------------------------------------
 
-saveAs = args.saveAs or 'YOUTUBEID'
+saveAs = args.saveAs or 'youtube-id'
 
 # ------------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ except:
 
 # ------------------------------------------------------------------------------
 
-quality = 30   # Lower number = higher quality but bigger file size
+quality = 29   # Lower number = higher quality but bigger file size
 
 # ------------------------------------------------------------------------------
 
@@ -126,15 +126,15 @@ try:
 	print('\n ----------------------------------------------------------------------\n')
 	print('\n Press [Ctrl]-C to exit. \n')
 	
-	input = input.lower().strip()
-	if input.find('.') == -1 and input.find(';') == -1 and input != 'category':
+	input = input.strip()
+	if input.find('.') == -1 and input.find(';') == -1 and input.lower() != 'category':
 		input = input + '.mp4'
 	video = input
 	
 	
 	# --- YouTube Download -------------------------------------------------
 
-	if video.find('youtube.com') != -1:
+	if video.lower().find('youtube.com') != -1:
 		print(' Starting download of video... ')
 		downloadHeight = 720
 		if maximumVideoHeight >= 4320: # Future product
@@ -165,7 +165,7 @@ try:
 
 		print(' Setting the owner of the file to current user...')
 		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
-		if saveAs != 'YOUTUBEID':
+		if saveAs.lower() != 'youtube-id':
 			try:
 				os.rename(videoCategoryFolder + video, videoCategoryFolder + saveAs)
 				video = saveAs
@@ -204,7 +204,7 @@ try:
 	while playCount >= 0:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
-		if (video == 'category'):
+		if (video.lower() == 'category'):
 			for videoFullPath in glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True):
 				subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
 		else:
