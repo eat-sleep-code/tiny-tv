@@ -2,9 +2,9 @@
 
 Do you remember the classic console TV's of the second half of the last century?  You know, the ones that were a piece of furniture and took up a large portion of a room?   Now you can build one that has that same classic look --  but only fills up a corner of your desk.
 
-[![Tiny TV (featuring Bugs Bunny and Daffy Duck)](https://yt-embed.herokuapp.com/embed?v=es5J1oA_HFo)](https://www.youtube.com/watch?v=es5J1oA_HFo "Tiny TV - Cartoon Example")
+[![Tiny TV (featuring Bugs Bunny and Daffy Duck)](docs/tiny-tv-video-play-bugs-bunny.jpg)](https://www.youtube.com/watch?v=es5J1oA_HFo "Tiny TV - Cartoon Example")
 
-[![Tiny TV (featuring Becky G)](https://yt-embed.herokuapp.com/embed?v=-g9xvwmz9Os)](https://www.youtube.com/watch?v=-g9xvwmz9Os "Tiny TV - Music Video Example")
+[![Tiny TV (featuring Becky G)](docs/tiny-tv-video-play-becky-g.jpg)](https://www.youtube.com/watch?v=-g9xvwmz9Os "Tiny TV - Music Video Example")
 
 ## Getting Started
 
