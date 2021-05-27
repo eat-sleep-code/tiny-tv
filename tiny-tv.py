@@ -8,7 +8,7 @@ import shutil
 import sys
 import youtube_dl
 
-version = '2020.10.27'
+version = '2021.01.24'
 
 # === Argument Handling ========================================================
 

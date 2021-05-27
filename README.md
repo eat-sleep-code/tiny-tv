@@ -15,7 +15,7 @@ Do you remember the classic console TV's of the second half of the last century?
   - Enable SSH
   - Set your memory split to at least 128MB
 - Connect your display to your Raspberry Pi and configure according to the manufacturer's instructions
-- Ensure audio output is correctly configured.
+- Ensure [audio output is correctly configured](#audio-settings).
 
 ---
 
