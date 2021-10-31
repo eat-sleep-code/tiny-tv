@@ -115,6 +115,7 @@ clear()
 def backlightOff():
 	try:
 		subprocess.call('sudo echo 1 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
+		clear()
 	except:
 		print('\n WARNING: Could not turn backlight off.')
 		pass
@@ -122,9 +123,11 @@ def backlightOff():
 def backlightOn():
 	try:
 		subprocess.call('sudo echo 0 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
+		clear()
 	except:
 		print('\n WARNING: Could not turn backlight on.')
 		pass
+
 
 # === Functions ================================================================
 
@@ -143,7 +146,7 @@ def getVideoPath(inputPath):
 
 try: 
 	os.chdir('/home/pi')
-	
+	backlightOff()
 	print('\n Tiny TV ' + version )
 	print('\n ----------------------------------------------------------------------\n')
 	print('\n Press [Ctrl]-C to exit. \n')
@@ -244,7 +247,7 @@ try:
 	sys.exit(0)
 
 except KeyboardInterrupt:
-	backlightOn()
+	backlightOff()
 	echoOn()
 	sys.exit(1)
 
