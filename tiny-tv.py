@@ -8,7 +8,7 @@ import shutil
 import sys
 import youtube_dl
 
-version = '2021.01.24'
+version = '2021.10.30'
 
 # === Argument Handling ========================================================
 
@@ -110,6 +110,21 @@ def clear():
 	subprocess.call('clear' if os.name == 'posix' else 'cls')
 clear()
 
+# === Backlight Control ========================================================
+
+def backlightOff():
+	try:
+		subprocess.call('sudo echo 1 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
+	except:
+		print('\n WARNING: Could not turn backlight off.')
+		pass
+
+def backlightOn():
+	try:
+		subprocess.call('sudo echo 0 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
+	except:
+		print('\n WARNING: Could not turn backlight on.')
+		pass
 
 # === Functions ================================================================
 
@@ -213,10 +228,14 @@ try:
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
 		if (video.lower() == 'category'):
 			for videoFullPath in glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True):
+				backlightOn()
 				subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+				backlightOff()
 		else:
 			videoFullPath = videoCategoryFolder + str(video)
+			backlightOn()
 			subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
+			backlightOff()
 		if loop == False:
 			break
 		else:
@@ -225,6 +244,7 @@ try:
 	sys.exit(0)
 
 except KeyboardInterrupt:
+	backlightOn()
 	echoOn()
 	sys.exit(1)
 
