@@ -3,13 +3,21 @@ import os
 import subprocess
 
 parser = argparse.ArgumentParser()
-parser.add_argument(dest='powerState', help='Specify the backlight power state', type=bool, default=True)
+parser.add_argument(dest='power', help='Specify the backlight power state', type=str, default='True')
 args = parser.parse_args()
 
-if args.powerState == False:
-    subprocess.call('sudo echo 1 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
-else:
-    subprocess.call('sudo echo 0 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
+try:
+		powerState = args.power.lower().strip()
+except: 
+		powerState = true
 
-subprocess.call('clear' if os.name == 'posix' else 'cls')
-    
+try:
+
+		if powerState == 'false' or powerState == 'off' or powerState == '0':
+				subprocess.call('sudo echo 1 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
+		else:
+				subprocess.call('sudo echo 0 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
+
+		subprocess.call('clear' if os.name == 'posix' else 'cls')
+except:
+		pass

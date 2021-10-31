@@ -20,16 +20,19 @@ sudo git clone https://github.com/eat-sleep-code/tiny-tv
 sudo chown -R $USER:$USER tiny-tv
 cd tiny-tv
 sudo chmod +x tiny-tv.py
+sudo chmod +x backlight.py
 
 cd ~
 echo ''
 echo -e '\033[93mSetting up aliases... \033[0m'
 sudo touch ~/.bash_aliases
 sudo sed -i '/\b\(function tiny-tv\)\b/d' ~/.bash_aliases
+sudo sed -i '/\b\(function backlight\)\b/d' ~/.bash_aliases
 echo "# Tiny TV" | sudo tee -a ~/.bash_aliases > /dev/null
 sudo sed -i '$ a function tiny-tv { sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-persist { screen sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
+sudo sed -i '$ a function backlight { sudo python3 ~/tiny-tv/backlight.py "$@"; }' ~/.bash_aliases
 echo -e 'You may use \e[1mtiny-tv <options>\e[0m to launch the program.'
 echo ''
 echo ''
