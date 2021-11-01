@@ -189,7 +189,11 @@ try:
 			pass
 
 		print(' Setting the owner of the file to current user...')
-		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		try:
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		except:
+			pass
+		
 		if saveAs.lower() != 'youtube-id':
 			try:
 				os.rename(videoCategoryFolder + video, videoCategoryFolder + saveAs)
@@ -205,14 +209,21 @@ try:
 		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
-		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
-		
+		try:
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		except:
+			pass
+
 	elif removeHorizontalBars == True:
 		print(' Starting removal of horizontal black bars (this will take a while)... ')
 		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
-		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		try:
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		except:
+			pass
+		
 
 	# --- Resize only ------------------------------------------------------
 
@@ -221,7 +232,11 @@ try:
 		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
-		shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		try:
+			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+		except:
+			pass
+		
 	
 	# --- Playback ---------------------------------------------------------
 
