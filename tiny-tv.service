@@ -1,0 +1,14 @@
+
+[Unit]
+Description=Tiny TV Service
+
+[Service]
+ExecStart=/usr/bin/python3 /home/pi/tiny-tv/tiny-tv.py --category 'cartoons'
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=Tiny TV
+User=pi
+
+[Install]
+WantedBy=multi-user.target

@@ -127,6 +127,14 @@ If you are using a USB audio device you may need to edit the `/usr/share/alsa/al
 defaults.ctl.card 1
 defaults.pcm.card 1
 ```
+---
+
+## Autostart Tiny TV
+Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here is how!
+
+* Review `/etc/systemd/system/tiny-tv.service`
+   * If you would like to add any of aforementioned options you may do so by editing the service file.
+* Run `~/tiny-tv/tiny-tv.service.sh`
 
 ---
 

@@ -22,6 +22,13 @@ cd tiny-tv
 sudo chmod +x tiny-tv.py
 sudo chmod +x backlight.py
 
+echo ''
+echo -e '\033[93mCreating Service... \033[0m'
+sudo mv tiny-tv.service /etc/systemd/system/tiny-tv.service
+sudo chown root:root /etc/systemd/system/tiny-tv.service
+sudo chmod +x *.sh 
+echo 'Please see the README file for more information on configuring the service.'
+
 cd ~
 echo ''
 echo -e '\033[93mSetting up aliases... \033[0m'
