@@ -82,10 +82,10 @@ else:
 # ------------------------------------------------------------------------------
 
 shuffle = args.shuffle or False
-if str(loop) == 'True':
-	loop = True
+if str(shuffle) == 'True':
+	shuffle = True
 else:
-	loop = False
+	shuffle = False
 
 # ------------------------------------------------------------------------------
 
