@@ -11,6 +11,8 @@ import youtube_dl
 
 version = '2021.11.05'
 
+os.environ['TERM'] = 'xterm-256color'
+
 # === Argument Handling ========================================================
 
 parser = argparse.ArgumentParser()
