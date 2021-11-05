@@ -35,7 +35,10 @@ sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh
 tiny-tv <input> [options]
 tiny-tv-persist <input> [options]
 tiny-tv-resume
-backlight [power state]
+tiny-tv-start _(starts the service, if enabled)_
+tiny-tv-stop _(stops the service, if enabled)_
+tiny-tv-update _(reinstalls Tiny TV program)_
+backlight [power state] _(turns on or off the backlight)_
 ```
 
 ### Options

@@ -39,6 +39,9 @@ echo "# Tiny TV" | sudo tee -a ~/.bash_aliases > /dev/null
 sudo sed -i '$ a function tiny-tv { sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-persist { screen sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-start { sudo systemctl start tiny-tv; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-stop { sudo systemctl stop tiny-tv; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-update { wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-tiny-tv.sh -O ~/install-tiny-tv.sh && sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh; }' ~/.bash_aliases
 sudo sed -i '$ a function backlight { sudo python3 ~/tiny-tv/backlight.py "$@"; }' ~/.bash_aliases
 echo -e 'You may use \e[1mtiny-tv <options>\e[0m to launch the program.'
 echo ''
