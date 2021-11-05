@@ -49,6 +49,7 @@ backlight [power state]
 + _--resize_ : Resize the video to the maximum video height.  This is a time-intensive process.
 + _--volume_ : Set the initial volume in decibels [db] *(default: -20, min: -60, max: 6`)*
 + _--loop_ : Set whether video plays continuously in a loop *(default: True)*
++ _--shuffle_ : Set whether category-based playback is shuffled *(default: False)*
 
 ---
 

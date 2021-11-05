@@ -3,12 +3,13 @@ from time import sleep
 import argparse
 import glob
 import os
+import random
 import subprocess
 import shutil
 import sys
 import youtube_dl
 
-version = '2021.10.30'
+version = '2021.11.04'
 
 # === Argument Handling ========================================================
 
@@ -22,6 +23,7 @@ parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help=
 parser.add_argument('--resize', dest='resize', help='Resize but do not crop')
 parser.add_argument('--volume', dest='volume', help='Set the initial volume in decibels (-60 to 6)', type=int)
 parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop')
+parser.add_argument('--shuffle', dest='shuffle', help='Set whether category-based playback is shuffled')
 args = parser.parse_args()
 
 
@@ -76,6 +78,14 @@ if str(loop) == 'False':
 	loop = False
 else:
 	loop = True
+
+# ------------------------------------------------------------------------------
+
+shuffle = args.shuffle or False
+if str(loop) == 'True':
+	loop = True
+else:
+	loop = False
 
 # ------------------------------------------------------------------------------
 
@@ -245,7 +255,10 @@ try:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
 		if (video.lower() == 'category'):
-			for videoFullPath in glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True):
+			videosToPlay = glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True)
+			if shuffle == True:
+				random.shuffle(videosToPlay)
+			for videoFullPath in videosToPlay:
 				backlightOn()
 				subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
 				backlightOff()
