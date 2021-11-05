@@ -138,7 +138,7 @@ Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here i
 
 * Review `/etc/systemd/system/tiny-tv.service`
    * If you would like to add any of aforementioned options you may do so by editing the service file.
-* Run `~/tiny-tv/tiny-tv.service.sh`
+* Run `~/tiny-tv/install-tiny-tv.service.sh`
 
 ---
 
