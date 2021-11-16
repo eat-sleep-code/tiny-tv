@@ -1,7 +1,8 @@
 ### Compatibility Notice ###
-
-Rasberry Pi OS "Bullseye" is _not_ supported due to various dependencies no longer working in Bullseye.   Raspberry Pi OS "**Buster**" is the suggested version for powering a Tiny TV at this time.
-
+```diff
+- Rasberry Pi OS "Bullseye" is NOT supported due to various dependencies no longer working in Bullseye.   
++ Raspberry Pi OS "Buster" is the suggested version for powering a Tiny TV at this time.
+```
 ---
 
 
