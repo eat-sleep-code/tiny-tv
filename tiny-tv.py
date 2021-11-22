@@ -8,8 +8,9 @@ import subprocess
 import shutil
 import sys
 import youtube_dl
+import vlc
 
-version = '2021.11.05'
+version = '2021.11.22'
 
 os.environ['TERM'] = 'xterm-256color'
 
@@ -23,7 +24,7 @@ parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set
 parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)')
 parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)')
 parser.add_argument('--resize', dest='resize', help='Resize but do not crop')
-parser.add_argument('--volume', dest='volume', help='Set the initial volume in decibels (-60 to 6)', type=int)
+parser.add_argument('--volume', dest='volume', help='Set the initial volume percent', type=int)
 parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop')
 parser.add_argument('--shuffle', dest='shuffle', help='Set whether category-based playback is shuffled')
 args = parser.parse_args()
@@ -91,18 +92,17 @@ else:
 
 # ------------------------------------------------------------------------------
 
-volume = args.volume or -20
-maxVolume = 6
-minVolume = -60
-# Convert decibels to millibels
+volume = args.volume or 100
+maxVolume = 100
+minVolume = 0
 try:
-	volume = int(volume) * 100
-	if volume > maxVolume * 100:
-		volume = maxVolume * 100
-	if volume < minVolume * 100:
-		volume = minVolume * 100
+	volume = int(volume)
+	if volume > maxVolume:
+		volume = maxVolume
+	if volume < minVolume:
+		volume = minVolume
 except:
-	volume = -2000
+	volume = 50
 
 # ------------------------------------------------------------------------------
 
@@ -119,7 +119,8 @@ def echoOff():
 def echoOn():
 	subprocess.run(['stty', 'echo'], check=True)
 def clear():
-	subprocess.call('clear' if os.name == 'posix' else 'cls')
+	print('Clearing...')
+	#subprocess.call('clear' if os.name == 'posix' else 'cls')
 clear()
 
 # === Backlight Control ========================================================
@@ -129,19 +130,18 @@ def backlightOff():
 		subprocess.call('sudo echo 1 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
 		clear()
 	except:
-		print('\n WARNING: Could not turn backlight off.')
 		pass
+
 
 def backlightOn():
 	try:
 		subprocess.call('sudo echo 0 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
 		clear()
 	except:
-		print('\n WARNING: Could not turn backlight on.')
 		pass
 
 
-# === Functions ================================================================
+# === Playback Functions ======================================================
 
 def getVideoPath(inputPath):
 	try:
@@ -152,6 +152,25 @@ def getVideoPath(inputPath):
 		quit()
 	else:
 		return inputPath
+
+
+def playVideo(videoFullPath, volume = 100):
+	try:
+		instance = vlc.Instance("-I dummy --aout=alsa")
+		player = instance.media_player_new()
+		media = instance.media_new(videoFullPath)
+		player.set_media(media)
+		player.audio_set_volume(volume)
+		backlightOn()
+		player.play()
+		mediaLength = player.get_length()
+		print('Length: ', mediaLength)
+		sleep(mediaLength)
+		backlightOff()
+		return True
+	except Exception as ex:
+		print ('\n ERROR: ' + str(ex))
+		return False
 
 
 # === Tiny TV ==================================================================
@@ -253,6 +272,7 @@ try:
 	# --- Playback ---------------------------------------------------------
 
 	playCount = 0
+	backlightOff()
 	while playCount >= 0:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
@@ -261,14 +281,10 @@ try:
 			if shuffle == True:
 				random.shuffle(videosToPlay)
 			for videoFullPath in videosToPlay:
-				backlightOn()
-				subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
-				backlightOff()
+				videoPlayed = playVideo(videoFullPath, volume)
 		else:
 			videoFullPath = videoCategoryFolder + str(video)
-			backlightOn()
-			subprocess.call('omxplayer -o alsa --vol ' + str(volume) + ' "' + videoFullPath + '"', shell=True)
-			backlightOff()
+			videoPlayed = playVideo(videoFullPath, volume)
 		if loop == False:
 			break
 		else:

@@ -9,8 +9,8 @@ sudo apt update
 
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
-sudo apt install -y git python3 python3-pip omxplayer ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth
-sudo pip3 install keyboard youtube_dl --force
+sudo apt install -y git python3 python3-pip vlc ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth
+sudo pip3 install keyboard python-vlc youtube_dl --force
 
 echo ''
 echo -e '\033[93mInstalling Tiny TV... \033[0m'
