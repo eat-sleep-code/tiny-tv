@@ -1,4 +1,5 @@
 from datetime import datetime
+from sshkeyboard import listen_keyboard
 from time import sleep
 import argparse
 import glob
@@ -7,8 +8,10 @@ import random
 import subprocess
 import shutil
 import sys
-import youtube_dl
+import threading
 import vlc
+import youtube_dl
+
 
 version = '2021.11.22'
 
@@ -111,6 +114,7 @@ quality = 29   # Lower number = higher quality but bigger file size
 # ------------------------------------------------------------------------------
 
 playCount = 0
+isPlaying = False
 
 # === Echo Control =============================================================
 
@@ -122,6 +126,7 @@ def clear():
 	print('Clearing...')
 	#subprocess.call('clear' if os.name == 'posix' else 'cls')
 clear()
+
 
 # === Backlight Control ========================================================
 
@@ -141,6 +146,20 @@ def backlightOn():
 		pass
 
 
+# === Keyboard Watcher ========================================================
+
+def handleKeyPress(key, player):
+	global volume
+	global minVolume
+	global maxVolume
+	if key == '+' and volume < maxVolume:
+		volume = volume + 1
+		print('Volume increased to:', volume)
+	elif key == '-' and volume > minVolume:
+		volume = volume - 1
+		print('Volume decreased to:', volume)
+
+
 # === Playback Functions ======================================================
 
 def getVideoPath(inputPath):
@@ -154,18 +173,28 @@ def getVideoPath(inputPath):
 		return inputPath
 
 
-def playVideo(videoFullPath, volume = 100):
+def playVideo(instance, player, videoFullPath):
+	global isPlaying
+	global volume
+	global maxVolume
+	global minVolume
 	try:
-		instance = vlc.Instance("-I dummy --aout=alsa")
-		player = instance.media_player_new()
 		media = instance.media_new(videoFullPath)
+		print('Playing' + videoFullPath)
 		player.set_media(media)
 		player.audio_set_volume(volume)
 		backlightOn()
-		player.play()
-		mediaLength = player.get_length()
-		print('Length: ', mediaLength)
-		sleep(mediaLength)
+		#player.play()
+		sleep(5)
+		
+		
+		while player.is_playing():
+			isPlaying = True
+		
+			listen_keyboard(on_press=handleKeyPress)
+			player.audio_set_volume(volume)
+				
+		isPlaying = False	
 		backlightOff()
 		return True
 	except Exception as ex:
@@ -276,15 +305,19 @@ try:
 	while playCount >= 0:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
+		instance = vlc.Instance("--vout=dummy --aout=alsa --no-osd --fullscreen --align=0 --width=640 --height=480")
+		player = instance.media_player_new()
+		
+		
 		if (video.lower() == 'category'):
 			videosToPlay = glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True)
 			if shuffle == True:
 				random.shuffle(videosToPlay)
 			for videoFullPath in videosToPlay:
-				videoPlayed = playVideo(videoFullPath, volume)
+				videoPlayed = playVideo(instance, player, videoFullPath)
 		else:
 			videoFullPath = videoCategoryFolder + str(video)
-			videoPlayed = playVideo(videoFullPath, volume)
+			videoPlayed = playVideo(instance, player, videoFullPath)
 		if loop == False:
 			break
 		else:
