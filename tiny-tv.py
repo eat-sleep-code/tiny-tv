@@ -5,15 +5,16 @@ import argparse
 import glob
 import os
 import random
-import subprocess
+import signal
 import shutil
+import subprocess
 import sys
 import threading
 import vlc
 import youtube_dl
 
 
-version = '2021.11.22'
+version = '2021.11.23'
 
 os.environ['TERM'] = 'xterm-256color'
 
@@ -114,6 +115,11 @@ quality = 29   # Lower number = higher quality but bigger file size
 
 # ------------------------------------------------------------------------------
 
+instance = vlc.Instance('--aout=alsa --no-osd --fullscreen --align=0 --width=640 --height=480 --verbose -1')
+player = instance.media_player_new()
+
+# ------------------------------------------------------------------------------
+		
 playCount = 0
 isPlaying = False
 isPaused = False
@@ -154,6 +160,9 @@ def watchForKeyPress():
 	listen_keyboard(on_press=handleKeyPress)
 			
 def handleKeyPress(key):
+	global instance 
+	global player
+	global playCount
 	global volume
 	global minVolume
 	global maxVolume
@@ -162,19 +171,39 @@ def handleKeyPress(key):
 	global isPaused
 	if key == '+' and volume < (maxVolume - volumeGradiation):
 		volume = volume + volumeGradiation
-		print('Volume increased to:', volume)
+		print('Volume:', str(volume) + '%')
+		player.audio_set_volume(volume)
 	elif key == '-' and volume > (minVolume + volumeGradiation):
 		volume = volume - volumeGradiation
-		print('Volume decreased to:', volume)
+		print('Volume:', str(volume) + '%')
+		player.audio_set_volume(volume)
 	elif key == 'space' and isPaused == False:
 		isPaused = True
 		isPlaying = True
 		print('Pausing playback...')
+		player.set_pause(1)
 	elif key == 'space' and isPaused == True:
 		isPlaying = True
 		isPaused = False
 		print('Resuming playback...')
-
+		player.set_pause(0)
+	elif key == 'left':
+		print('Restarting current video...')
+		player.set_position(0)
+	elif key == 'right':
+		print('Playing next video in playlist...')  
+		#As we use our own array as a playlist, we actually stop the current player so the next one will start
+		isPaused = False
+		isPlaying = False
+		player.stop() 
+	elif key == 'q':
+		isPaused = False
+		isPlaying = False
+		playCount = -10
+		player.stop()
+		echoOn()
+		os.kill(os.getpid(), signal.SIGKILL)
+		sys.exit(0)
 
 # === Playback Functions ======================================================
 
@@ -187,15 +216,18 @@ def getVideoPath(inputPath):
 		quit()
 	else:
 		return inputPath
+   
 
-
-def playVideo(instance, player, videoFullPath):
+def playVideo(videoFullPath):
+	global instance
+	global player
 	global isPlaying
 	global isPaused
 	global volume
 	global maxVolume
 	global minVolume
 	try:
+		player = instance.media_player_new()
 		media = instance.media_new(videoFullPath)
 		print('Playing' + videoFullPath)
 		player.set_media(media)
@@ -209,17 +241,7 @@ def playVideo(instance, player, videoFullPath):
 
 		isPlaying = True
 		isPaused = False
-		while isPlaying == True or (isPlaying == False and isPaused == True):
-			print('isPlaying', isPlaying, '', 'isPaused', isPaused)
-			player.audio_set_volume(volume)
-			if isPaused == True:
-				isPlaying = bool(player.is_playing())
-				player.set_pause(1)
-				sleep(1)
-			else:
-				player.set_pause(0)
-				sleep(1)
-				isPlaying = bool(player.is_playing())
+		while player.is_playing() == True or isPaused == True:
 			sleep(1)
 
 		isPlaying = False
@@ -334,8 +356,6 @@ try:
 	while playCount >= 0:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
-		instance = vlc.Instance('--aout=alsa --no-osd --fullscreen --align=0 --width=640 --height=480')
-		player = instance.media_player_new()
 		
 		
 		if (video.lower() == 'category'):
@@ -343,10 +363,10 @@ try:
 			if shuffle == True:
 				random.shuffle(videosToPlay)
 			for videoFullPath in videosToPlay:
-				videoPlayed = playVideo(instance, player, videoFullPath)
+				videoPlayed = playVideo(videoFullPath)
 		else:
 			videoFullPath = videoCategoryFolder + str(video)
-			videoPlayed = playVideo(instance, player, videoFullPath)
+			videoPlayed = playVideo(videoFullPath)
 		if loop == False:
 			break
 		else:
@@ -357,7 +377,8 @@ try:
 except KeyboardInterrupt:
 	backlightOff()
 	echoOn()
-	sys.exit(1)
+	sleep(1)
+	sys.exit(0)
 
 else:
 	sys.exit(0)

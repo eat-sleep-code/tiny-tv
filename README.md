@@ -1,11 +1,3 @@
-### Compatibility Notice ###
-```diff
-- Rasberry Pi OS "Bullseye" is NOT supported due to various dependencies no longer working in Bullseye.   
-+ Raspberry Pi OS "Buster" is the suggested version for powering a Tiny TV at this time.
-```
----
-
-
 # Tiny TV
 
 Do you remember the classic console TV's of the second half of the last century?  You know, the ones that were a piece of furniture and took up a large portion of a room?   Now you can build one that has that same classic look --  but only fills up a corner of your desk.
@@ -31,7 +23,7 @@ Do you remember the classic console TV's of the second half of the last century?
 
 Installation of the program, as well as any software prerequisites, can be completed with the following two-line install script.
 
-```
+```sh
 wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-tiny-tv.sh -O ~/install-tiny-tv.sh
 sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh
 ```
@@ -39,14 +31,14 @@ sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh
 ---
 
 ## Usage
-```
+```sh
 tiny-tv <input> [options]
 tiny-tv-persist <input> [options]
 tiny-tv-resume
-tiny-tv-start _(starts the service, if enabled)_
-tiny-tv-stop _(stops the service, if enabled)_
-tiny-tv-update _(reinstalls Tiny TV program)_
-backlight [power state] _(turns on or off the backlight)_
+tiny-tv-start # starts the service, if enabled
+tiny-tv-stop # stops the service, if enabled
+tiny-tv-update # reinstalls Tiny TV program
+backlight [power state] #turns on or off the backlight; if supported by display
 ```
 
 ### Options
@@ -58,7 +50,7 @@ backlight [power state] _(turns on or off the backlight)_
 + _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file.  This time-intensive process will also resize the video to the maximum video height.   *(default: False)*
 + _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file.  This time-intensive process will also resize the video to the maximum video height.    *(default: False)*
 + _--resize_ : Resize the video to the maximum video height.  This is a time-intensive process.
-+ _--volume_ : Set the initial volume in decibels [db] *(default: -20, min: -60, max: 6`)*
++ _--volume_ : Set the initial volume percent *(default: 100, min: 0, max: 100`)*
 + _--loop_ : Set whether video plays continuously in a loop *(default: True)*
 + _--shuffle_ : Set whether category-based playback is shuffled *(default: False)*
 
@@ -70,16 +62,14 @@ You can control the device from either a Bluetooth keyboard or via an SSH connec
 
 |Key|Action|
 |---|---|
-| - | Decrease Volume |
-| + | Increase Volume |
-| Space or p | Pause/Resume |
+| - | Decrease volume <em> (in increments of 5%)</em> |
+| + | Increase volume <em> (in increments of 5%)</em> |
+| Space | Pause/Resume |
 | q | Exit |
-| 1 | Increase Speed |
-| 2 | Decrease Speed |
-| Left | Seek -30 |
-| Right | Seek +30 |
-| Down | Seek -600 |
-| Up | Seek +600 |
+| Left | Restart current video |
+| Right | Advanced to next video |
+
+
 
 ---
 
@@ -87,38 +77,38 @@ You can control the device from either a Bluetooth keyboard or via an SSH connec
 
 #### To download, crop, and play a video from YouTube:
 
-```
+```sh
 tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --removeVerticalBars True 
 ```
 
 The default video height is 480px.  This is an ideal resolution for a true Tiny TV.  If you are utilizing a more powerful Raspberry Pi and a higher resolution screen, you may alter the maximum video height.
 
-```
+```sh
 tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --maximumVideoHeight 1080
 ```
 
-#### To play a music video from your Raspberry Pi at a volume of 3db:
+#### To play a music video from your Raspberry Pi at a volume of 30%:
 
-```
-tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 3
+```sh
+tiny-tv 'Becky G - Mayores (featuring Bad Bunny).mp4' --category 'music' --volume 30
 ```
 
 Alternatively, you can type the video subfolder instead of using the category argument:
 
-```
-tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume -10
+```sh
+tiny-tv 'music/Becky G - Mayores (featuring Bad Bunny).mp4' --volume 10
 ```
 
 #### To play all the cartoons in a loop:
 
-```
-tiny-tv 'category' --category 'cartoons' --volume 0
+```sh
+tiny-tv 'category' --category 'cartoons' --volume 50
 ```
 
 #### Keep Tiny TV playing even after SSH session ends
 
-```
-tiny-tv-persist 'category' --category 'christmas' --volume 3
+```sh
+tiny-tv-persist 'category' --category 'christmas' --volume 50
 ```
 After the video begins playing, you may:
 1) Press __Ctrl-A__.
@@ -135,7 +125,7 @@ To reconnect to the existing playback, you may:
 
 If you are using a USB audio device you may need to edit the `/usr/share/alsa/alsa.conf` file for audio output to function properly.  Set the following values:
 
-```
+```sh
 defaults.ctl.card 1
 defaults.pcm.card 1
 ```
@@ -196,7 +186,7 @@ Consider your case design, some case construction steps may be inserted before, 
 
 1) Install the software, following the manufacturer's [instructions](https://github.com/tianyoujian/MZDPI).
 
-   ```
+   ```sh
    cd ~/
    git clone https://github.com/tianyoujian/MZDPI.git
    cd MZDPI/vga
