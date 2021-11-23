@@ -1,5 +1,5 @@
 from datetime import datetime
-from sshkeyboard import listen_keyboard
+from sshkeyboard import listen_keyboard, stop_listening
 from time import sleep
 import argparse
 import glob
@@ -96,6 +96,7 @@ else:
 # ------------------------------------------------------------------------------
 
 volume = args.volume or 100
+volumeGradiation = 5
 maxVolume = 100
 minVolume = 0
 try:
@@ -115,6 +116,7 @@ quality = 29   # Lower number = higher quality but bigger file size
 
 playCount = 0
 isPlaying = False
+isPaused = False
 
 # === Echo Control =============================================================
 
@@ -148,16 +150,27 @@ def backlightOn():
 
 # === Keyboard Watcher ========================================================
 
-def handleKeyPress(key, player):
+def watchForKeyPress():
+	listen_keyboard(on_press=handleKeyPress)
+			
+def handleKeyPress(key):
 	global volume
 	global minVolume
 	global maxVolume
-	if key == '+' and volume < maxVolume:
-		volume = volume + 1
+	global volumeGradiation
+	global isPaused
+	if key == '+' and volume < (maxVolume - volumeGradiation):
+		volume = volume + volumeGradiation
 		print('Volume increased to:', volume)
-	elif key == '-' and volume > minVolume:
-		volume = volume - 1
+	elif key == '-' and volume > (minVolume + volumeGradiation):
+		volume = volume - volumeGradiation
 		print('Volume decreased to:', volume)
+	elif key == 'space' and isPaused == False:
+		isPaused = True
+		print('Pausing playback...')
+	elif key == 'space' and isPaused == True:
+		isPaused = False
+		print('Resuming playback...')
 
 
 # === Playback Functions ======================================================
@@ -175,6 +188,7 @@ def getVideoPath(inputPath):
 
 def playVideo(instance, player, videoFullPath):
 	global isPlaying
+	global isPaused
 	global volume
 	global maxVolume
 	global minVolume
@@ -184,17 +198,29 @@ def playVideo(instance, player, videoFullPath):
 		player.set_media(media)
 		player.audio_set_volume(volume)
 		backlightOn()
-		#player.play()
+		player.play()
 		sleep(5)
 		
-		
-		while player.is_playing():
-			isPlaying = True
-		
-			listen_keyboard(on_press=handleKeyPress)
+		keyWatcherThread = threading.Thread(target=watchForKeyPress)
+		keyWatcherThread.start()
+
+		isPlaying = True
+		isPaused = False
+		while isPlaying == True or (isPlaying == False and isPaused == True):
+			print('isPlaying', isPlaying, '', 'isPaused', isPaused)
 			player.audio_set_volume(volume)
-				
-		isPlaying = False	
+			if isPaused == True:
+				isPlaying = bool(player.is_playing())
+				player.set_pause(1)
+				sleep(1)
+			else:
+				player.set_pause(0)
+				sleep(1)
+				isPlaying = bool(player.is_playing())
+			
+
+		isPlaying = False
+		stop_listening()
 		backlightOff()
 		return True
 	except Exception as ex:
