@@ -1,8 +1,9 @@
-### Compatibility Notice ###
-```diff
-- Rasberry Pi OS "Bullseye" is NOT supported due to various dependencies no longer working in Bullseye.   
-+ Raspberry Pi OS "Buster" is the suggested version for powering a Tiny TV at this time.
-```
+# Compatibility Notice
+
+Due to breaking changes in the Raspberry Pi OS window manager, this software will **not** work with the recent *Bullseye* version of Raspberry Pi OS.   A new BETA version of the Tiny TV software with support for *Bullseye* is available under the [vlc-migration](https://github.com/eat-sleep-code/tiny-tv/tree/vlc-migration) branch.   You are free to download those files and manually install them on your system, but do note they are BETA and may have unresolved issues.  The automated installer does not reference these files at this time.
+
+In the meantime, if you wish to use the production release of the Tiny TV software you will need to install the *Buster* version of Raspberry Pi OS.
+
 ---
 
 
