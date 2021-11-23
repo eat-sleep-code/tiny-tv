@@ -125,8 +125,8 @@ def echoOff():
 def echoOn():
 	subprocess.run(['stty', 'echo'], check=True)
 def clear():
-	print('Clearing...')
-	#subprocess.call('clear' if os.name == 'posix' else 'cls')
+	#print('Clearing...')
+	subprocess.call('clear' if os.name == 'posix' else 'cls')
 clear()
 
 
@@ -158,6 +158,7 @@ def handleKeyPress(key):
 	global minVolume
 	global maxVolume
 	global volumeGradiation
+	global isPlaying
 	global isPaused
 	if key == '+' and volume < (maxVolume - volumeGradiation):
 		volume = volume + volumeGradiation
@@ -167,8 +168,10 @@ def handleKeyPress(key):
 		print('Volume decreased to:', volume)
 	elif key == 'space' and isPaused == False:
 		isPaused = True
+		isPlaying = True
 		print('Pausing playback...')
 	elif key == 'space' and isPaused == True:
+		isPlaying = True
 		isPaused = False
 		print('Resuming playback...')
 
@@ -217,7 +220,7 @@ def playVideo(instance, player, videoFullPath):
 				player.set_pause(0)
 				sleep(1)
 				isPlaying = bool(player.is_playing())
-			
+			sleep(1)
 
 		isPlaying = False
 		stop_listening()
@@ -331,7 +334,7 @@ try:
 	while playCount >= 0:
 		playCount += 1
 		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
-		instance = vlc.Instance("--vout=dummy --aout=alsa --no-osd --fullscreen --align=0 --width=640 --height=480")
+		instance = vlc.Instance('--aout=alsa --no-osd --fullscreen --align=0 --width=640 --height=480')
 		player = instance.media_player_new()
 		
 		
