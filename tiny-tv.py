@@ -11,10 +11,10 @@ import subprocess
 import sys
 import threading
 import vlc
-import youtube_dl
+import yt_dlp
 
 
-version = '2021.11.23'
+version = '2023.08.22'
 
 os.environ['TERM'] = 'xterm-256color'
 
@@ -285,7 +285,7 @@ try:
 				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
 				'format': 'best[height=' + str(downloadHeight) + ']'
 			}
-			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
+			with yt_dlp.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
 				info = youtubeDownload.extract_info(video)
 				video = info.get('id', None) + '.' + info.get('ext', None)
 		except Exception as ex:
@@ -294,7 +294,7 @@ try:
 				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
 				'format': 'best'
 			}
-			with youtube_dl.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
+			with yt_dlp.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
 				info = youtubeDownload.extract_info(video)
 				video = info.get('id', None) + '.' + info.get('ext', None)
 			pass
