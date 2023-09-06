@@ -135,8 +135,10 @@ defaults.pcm.card 1
 ## Autostart Tiny TV
 Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here is how!
 
-### Via .profile
-* Add a line to the very end of ~/.profile such as `tiny-tv 'category' --category 'cartoons'` restart the Pi.   Note that this will attempt to start the Tiny TV program every time you login to via SSH, etc.   You may need to press CTRL-C to abort the loading of the application in these instances.
+### Via *.profile* file
+* Add a line to the very end of ~/.profile such as `tiny-tv 'category' --category 'cartoons'` and save the changes to the file.
+* Restart the Tiny TV.
+*Note that this method avoids many permissions issue which may arise when attemptint to use the **systemd** method below.   However, it will attempt to start the Tiny TV program every time you login to via SSH, etc.   You may need to press CTRL-C to abort the loading of the application in these instances.*
 
 ### Via systemd:
 * Review `/etc/systemd/system/tiny-tv.service`
@@ -148,7 +150,7 @@ Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here i
 
 ## Building Your Own Tiny TV (Legacy Design)
 
-* Stay tuned for an upgraded build guide for our current version of the Tiny TV.   
+*Stay tuned for an upgraded build guide for our current version of the Tiny TV.*
 
 ### Bill of Materials
 
