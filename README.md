@@ -39,7 +39,6 @@ tiny-tv-resume
 tiny-tv-start # starts the service, if enabled
 tiny-tv-stop # stops the service, if enabled
 tiny-tv-update # reinstalls Tiny TV program
-backlight [power state] #turns on or off the backlight, if supported by display
 ```
 
 ### Options
