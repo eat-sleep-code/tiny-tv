@@ -96,7 +96,7 @@ quality = 29   # Lower number = higher quality but bigger file size
 
 # ------------------------------------------------------------------------------
 
-instance = vlc.Instance('--aout=alsa --vout=opengl --no-osd --fullscreen --align=0 --width=640 --height=480 --verbose -1')
+instance = vlc.Instance('--aout=alsa --no-osd --fullscreen --align=0 --width=640 --height=480 --verbose -1')
 player = instance.media_player_new()
 
 # ------------------------------------------------------------------------------
