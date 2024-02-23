@@ -144,6 +144,12 @@ Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here i
    * If you would like to add any of aforementioned options you may do so by editing the service file.
 * Run `~/tiny-tv/install-tiny-tv.service.sh`
 
+
+> [!TIP]
+> If you are using a Raspberry Pi with 1GB &ndash; or less &ndash; of memory, you may wish to increase your SWAP file to match your memory size as outlined in this [third-party guide](https://pimylifeup.com/raspberry-pi-swap-file/).
+
+
+
 ---
 
 
