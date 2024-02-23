@@ -13,6 +13,13 @@ sudo apt install -y git python3 python3-pip vlc ffmpeg fonts-freefont-ttf screen
 sudo pip3 install sshkeyboard python-vlc yt-dlp rpi_backlight --force --break-system-packages
 echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
 
+echo ''
+echo -e '\033[93mProvisioning logs... \033[0m'
+sudo mkdir -p /home/pi/logs
+sudo chmod +rw /home/pi/logs
+sudo sed -i '\|^tmpfs /home/pi/logs|d' /etc/fstab
+sudo sed -i '$ a tmpfs /home/pi/logs tmpfs defaults,noatime,nosuid,size=16m 0 0' /etc/fstab
+sudo mount -a
 
 echo ''
 echo -e '\033[93mInstalling Tiny TV... \033[0m'
