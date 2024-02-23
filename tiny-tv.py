@@ -1,3 +1,5 @@
+from functions import Echo, Console
+from backlight import Backlight
 from datetime import datetime
 from sshkeyboard import listen_keyboard, stop_listening
 from time import sleep
@@ -14,9 +16,13 @@ import vlc
 import yt_dlp
 
 
-version = '2023.08.22'
+version = '2024.02.22'
 
 os.environ['TERM'] = 'xterm-256color'
+
+console = Console()
+echo = Echo()
+backlight = Backlight()
 
 # === Argument Handling ========================================================
 
@@ -24,13 +30,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument(dest='input', help='Select the video to be played', type=str)
 parser.add_argument('--saveAs', dest='saveAs', help='Enter the name you would like the file saved as', type=str) # USED IF DOWNLOADING FROM YOUTUBE ONLY
 parser.add_argument('--category', dest='category', help='Select the category', type=str)
-parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for the video', type=int) 
-parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)')
-parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)')
-parser.add_argument('--resize', dest='resize', help='Resize but do not crop')
-parser.add_argument('--volume', dest='volume', help='Set the initial volume percent', type=int)
-parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop')
-parser.add_argument('--shuffle', dest='shuffle', help='Set whether category-based playback is shuffled')
+parser.add_argument('--maximumVideoHeight', dest='maximumVideoHeight', help='Set the maximum height (in pixels) for the video', type=int, default=480) 
+parser.add_argument('--removeVerticalBars', dest='removeVerticalBars', help='Remove the vertical black bars from the input file (time-intensive)', type=bool, default=False)
+parser.add_argument('--removeHorizontalBars', dest='removeHorizontalBars', help='Remove the horizontal black bars from the input file (time-intensive)', type=bool, default=False)
+parser.add_argument('--resize', dest='resize', help='Resize but do not crop', type=bool, default=False)
+parser.add_argument('--volume', dest='volume', help='Set the initial volume percent', type=int, default=100)
+parser.add_argument('--loop', dest='loop', help='Set whether video plays continuously in a loop', type=bool, default=True)
+parser.add_argument('--shuffle', dest='shuffle', help='Set whether category-based playback is shuffled', type=bool, default=False)
 args = parser.parse_args()
 
 
@@ -42,11 +48,7 @@ saveAs = args.saveAs or 'youtube-id'
 
 # ------------------------------------------------------------------------------
 
-maximumVideoHeight = args.maximumVideoHeight or 480
-try:
-	maximumVideoHeight = int(maximumVideoHeight)
-except:
-	maximumVideoHeight = 480
+maximumVideoHeight = args.maximumVideoHeight
 
 # ------------------------------------------------------------------------------
 
@@ -56,52 +58,31 @@ videoCategoryFolder = videoFolder + category + '/'
 
 # ------------------------------------------------------------------------------
 
-removeVerticalBars = args.removeVerticalBars or False
-if str(removeVerticalBars) == 'True':
-	removeVerticalBars = True
-else:
-	removeVerticalBars = False
+removeVerticalBars = args.removeVerticalBars 
 
 # ------------------------------------------------------------------------------
 
-removeHorizontalBars = args.removeHorizontalBars or False
-if str(removeHorizontalBars) == 'True':
-	removeHorizontalBars = True
-else:
-	removeHorizontalBars = False
+removeHorizontalBars = args.removeHorizontalBars 
 
 # ------------------------------------------------------------------------------
 
-resize = args.resize or False
-if str(resize) == 'True':
-	resize = True
-else:
-	resize = False
+resize = args.resize 
 
 # ------------------------------------------------------------------------------
 
-loop = args.loop or True
-if str(loop) == 'False':
-	loop = False
-else:
-	loop = True
+loop = args.loop 
 
 # ------------------------------------------------------------------------------
 
-shuffle = args.shuffle or False
-if str(shuffle) == 'True':
-	shuffle = True
-else:
-	shuffle = False
+shuffle = args.shuffle
 
 # ------------------------------------------------------------------------------
 
-volume = args.volume or 100
+volume = args.volume
 volumeGradiation = 5
 maxVolume = 100
 minVolume = 0
 try:
-	volume = int(volume)
 	if volume > maxVolume:
 		volume = maxVolume
 	if volume < minVolume:
@@ -115,7 +96,7 @@ quality = 29   # Lower number = higher quality but bigger file size
 
 # ------------------------------------------------------------------------------
 
-instance = vlc.Instance('--aout=alsa --no-osd --fullscreen --align=0 --width=640 --height=480 --verbose -1')
+instance = vlc.Instance('--aout=alsa --vout=opengl --no-osd --fullscreen --align=0 --width=640 --height=480 --verbose -1')
 player = instance.media_player_new()
 
 # ------------------------------------------------------------------------------
@@ -123,35 +104,6 @@ player = instance.media_player_new()
 playCount = 0
 isPlaying = False
 isPaused = False
-
-# === Echo Control =============================================================
-
-def echoOff():
-	subprocess.run(['stty', '-echo'], check=True)
-def echoOn():
-	subprocess.run(['stty', 'echo'], check=True)
-def clear():
-	#print('Clearing...')
-	subprocess.call('clear' if os.name == 'posix' else 'cls')
-clear()
-
-
-# === Backlight Control ========================================================
-
-def backlightOff():
-	try:
-		subprocess.call('sudo echo 1 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
-		clear()
-	except:
-		pass
-
-
-def backlightOn():
-	try:
-		subprocess.call('sudo echo 0 | sudo tee /sys/class/backlight/rpi_backlight/bl_power', shell=True)
-		clear()
-	except:
-		pass
 
 
 # === Keyboard Watcher ========================================================
@@ -171,28 +123,27 @@ def handleKeyPress(key):
 	global isPaused
 	if key == '+' and volume < (maxVolume - volumeGradiation):
 		volume = volume + volumeGradiation
-		print('Volume:', str(volume) + '%')
+		console.info('Volume:' + str(volume) + '%')
 		player.audio_set_volume(volume)
 	elif key == '-' and volume > (minVolume + volumeGradiation):
 		volume = volume - volumeGradiation
-		print('Volume:', str(volume) + '%')
+		console.info('Volume:' + str(volume) + '%')
 		player.audio_set_volume(volume)
 	elif key == 'space' and isPaused == False:
 		isPaused = True
 		isPlaying = True
-		print('Pausing playback...')
+		console.info('Pausing playback...')
 		player.set_pause(1)
 	elif key == 'space' and isPaused == True:
 		isPlaying = True
 		isPaused = False
-		print('Resuming playback...')
+		console.info('Resuming playback...')
 		player.set_pause(0)
 	elif key == 'left':
-		print('Restarting current video...')
+		console.info('Restarting current video...')
 		player.set_position(0)
 	elif key == 'right':
-		print('Playing next video in playlist...')  
-		#As we use our own array as a playlist, we actually stop the current player so the next one will start
+		console.info('Playing next video in playlist...')  
 		isPaused = False
 		isPlaying = False
 		player.stop() 
@@ -201,7 +152,7 @@ def handleKeyPress(key):
 		isPlaying = False
 		playCount = -10
 		player.stop()
-		echoOn()
+		echo.on()
 		os.kill(os.getpid(), signal.SIGKILL)
 		sys.exit(0)
 
@@ -212,7 +163,7 @@ def getVideoPath(inputPath):
 		os.makedirs(inputPath, exist_ok = True)
 	except OSError:
 		print ('\n ERROR: Creation of the output folder ' + inputPath + ' failed!' )
-		echoOn()
+		echo.on()
 		quit()
 	else:
 		return inputPath
@@ -232,7 +183,7 @@ def playVideo(videoFullPath):
 		print('Playing' + videoFullPath)
 		player.set_media(media)
 		player.audio_set_volume(volume)
-		backlightOn()
+		backlight.powerState = 'off'
 		player.play()
 		sleep(5)
 		
@@ -246,7 +197,7 @@ def playVideo(videoFullPath):
 
 		isPlaying = False
 		stop_listening()
-		backlightOff()
+		backlight.powerState = 'off'
 		return True
 	except Exception as ex:
 		print ('\n ERROR: ' + str(ex))
@@ -257,7 +208,7 @@ def playVideo(videoFullPath):
 
 try: 
 	os.chdir('/home/pi')
-	backlightOff()
+	backlight.powerState = 'off'
 	print('\n Tiny TV ' + version )
 	print('\n ----------------------------------------------------------------------\n')
 	print('\n Press [Ctrl]-C to exit. \n')
@@ -289,7 +240,7 @@ try:
 				info = youtubeDownload.extract_info(video)
 				video = info.get('id', None) + '.' + info.get('ext', None)
 		except Exception as ex:
-			print(' Falling back to best quality video... ')
+			console.info(' Falling back to best quality video... ')
 			youtubeDownloadOptions = { 
 				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
 				'format': 'best'
@@ -299,7 +250,7 @@ try:
 				video = info.get('id', None) + '.' + info.get('ext', None)
 			pass
 
-		print(' Setting the owner of the file to current user...')
+		console.info(' Setting the owner of the file to current user...')
 		try:
 			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
 		except:
@@ -310,13 +261,13 @@ try:
 				os.rename(videoCategoryFolder + video, videoCategoryFolder + saveAs)
 				video = saveAs
 			except Exception as ex:
-				print(str(ex))
+				console.info(str(ex))
 	
 
 	# --- Pillar Box / Letter Box Removal ----------------------------------
 
 	if removeVerticalBars == True:
-		print(' Starting removal of vertical black bars (this will take a while)... ')
+		console.info(' Starting removal of vertical black bars (this will take a while)... ')
 		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
@@ -326,7 +277,7 @@ try:
 			pass
 
 	elif removeHorizontalBars == True:
-		print(' Starting removal of horizontal black bars (this will take a while)... ')
+		console.info(' Starting removal of horizontal black bars (this will take a while)... ')
 		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
@@ -339,7 +290,7 @@ try:
 	# --- Resize only ------------------------------------------------------
 
 	if resize == True and removeVerticalBars == False and removeHorizontalBars == False:
-		print(' Starting resize to maximum video height (this will take a while)... ')
+		console.info(' Starting resize to maximum video height (this will take a while)... ')
 		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
 		os.remove(videoCategoryFolder + video)
 		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
@@ -352,10 +303,10 @@ try:
 	# --- Playback ---------------------------------------------------------
 
 	playCount = 0
-	backlightOff()
+	backlight.powerState = 'off'
 	while playCount >= 0:
 		playCount += 1
-		print('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
+		console.info('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
 		
 		
 		if (video.lower() == 'category'):
@@ -375,8 +326,8 @@ try:
 	sys.exit(0)
 
 except KeyboardInterrupt:
-	backlightOff()
-	echoOn()
+	backlight.powerState = 'off'
+	echo.on()
 	sleep(1)
 	sys.exit(0)
 

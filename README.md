@@ -9,14 +9,14 @@ Do you remember the classic console TV's of the second half of the last century?
 
 ## Getting Started
 
+- Use [Raspberry Pi Imager](https://www.raspberrypi.com/software) to install Raspberry Pi OS Lite *(Bookworm)* on a microSD card
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
   - Expand your filesystem
   - Set your locale and keyboard options
   - Set up your WiFi connection
+  - Select your Audio device
   - Enable SSH
-  - Set your memory split to at least 128MB
 - Connect your display to your Raspberry Pi and configure according to the manufacturer's instructions
-- Ensure [audio output is correctly configured](#audio-settings).
 
 ---
 
@@ -124,7 +124,7 @@ To reconnect to the existing playback, you may:
 
 ## Audio Settings
 
-If you are using a USB audio device you may need to edit the `/usr/share/alsa/alsa.conf` file for audio output to function properly.  Set the following values:
+If you are using a USB audio device, you _may_ need to edit the `/usr/share/alsa/alsa.conf` file for audio output to function properly.  Set the following values:
 
 ```sh
 defaults.ctl.card 1
@@ -157,15 +157,15 @@ Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here i
 - 1x [Raspberry Pi Zero W](https://www.adafruit.com/product/3400)
   - Do not purchase a Raspberry Pi Zero (non-W) &ndash; you need the wireless connectivity.
   - If using the iUniker display, do not purchase a Raspberry Pi Zero WH &ndash; the headers it includes are the incorrect type and position.   
-- 1x [Female GPIO Header](https://smile.amazon.com/Geekworm-Stacking-Raspberry-Specifications-Extender/dp/B0827THC7R)
-- 1x [iUniker 2.8" 640x480 60fps Display](https://smile.amazon.com/Raspberry-iUniker-2-8-inch-Resolution-Touchscreen/dp/B07H8ZY89H)
-- 2x [90&deg; Down Angle Micro USB Plug](https://smile.amazon.com/Degree-Extension-Adapter-Charger-Adaptor/dp/B07C2K65NK) 
-- 1x [Sabrent USB External Stereo Sound Adapter](https://smile.amazon.com/Sabrent-External-Adapter-Windows-AU-MMSA/dp/B00IRVQ0F8)
-- 1x [90&deg; Right Angle Male Plug To Bare Open End TRS 3-Pole &#8539;"/3.5&#13212; Plug](https://smile.amazon.com/Fancasee-Replacement-Connector-Headphone-Earphone/dp/B08546Q38G)
+- 1x [Female GPIO Header](https://amazon.com/Geekworm-Stacking-Raspberry-Specifications-Extender/dp/B0827THC7R)
+- 1x [iUniker 2.8" 640x480 60fps Display](https://amazon.com/Raspberry-iUniker-2-8-inch-Resolution-Touchscreen/dp/B07H8ZY89H)
+- 2x [90&deg; Down Angle Micro USB Plug](https://amazon.com/Degree-Extension-Adapter-Charger-Adaptor/dp/B07C2K65NK) 
+- 1x [Sabrent USB External Stereo Sound Adapter](https://amazon.com/Sabrent-External-Adapter-Windows-AU-MMSA/dp/B00IRVQ0F8)
+- 1x [90&deg; Right Angle Male Plug To Bare Open End TRS 3-Pole &#8539;"/3.5&#13212; Plug](https://amazon.com/Fancasee-Replacement-Connector-Headphone-Earphone/dp/B08546Q38G)
 - 2x [Adafruit Mono 2.5W Class D Audio Amplifier - PAM8302](https://www.adafruit.com/product/2130)
-- 2x [Dayton Audio CE Series CE32A-8 1.25" Speaker](https://smile.amazon.com/Dayton-Audio-CE32A-8-Mini-Speaker/dp/B00BYE9AKM)
-- 1x [Assorted Jumper Wires](https://smile.amazon.com/IZOKEE-Solderless-Breadboard-Arduino-Project/dp/B08151TQHG)
-- 1x [Assorted Heat Shrink Tubing](https://smile.amazon.com/270-pcs-Adhesive-Assortment-MILAPEAK/dp/B0771K1Z7Q)
+- 2x [Dayton Audio CE Series CE32A-8 1.25" Speaker](https://amazon.com/Dayton-Audio-CE32A-8-Mini-Speaker/dp/B00BYE9AKM)
+- 1x [Assorted Jumper Wires](https://amazon.com/IZOKEE-Solderless-Breadboard-Arduino-Project/dp/B08151TQHG)
+- 1x [Assorted Heat Shrink Tubing](https://amazon.com/270-pcs-Adhesive-Assortment-MILAPEAK/dp/B0771K1Z7Q)
 - 1x USB extension cable 
 - Solder and soldering iron
 

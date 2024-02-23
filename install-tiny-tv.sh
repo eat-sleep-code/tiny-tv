@@ -10,7 +10,9 @@ sudo apt update
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
 sudo apt install -y git python3 python3-pip vlc ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth
-sudo pip3 install sshkeyboard python-vlc yt-dlp --force
+sudo pip3 install sshkeyboard python-vlc yt-dlp rpi_backlight --force --break-system-packages
+echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
+
 
 echo ''
 echo -e '\033[93mInstalling Tiny TV... \033[0m'
@@ -36,13 +38,13 @@ sudo touch ~/.bash_aliases
 sudo sed -i '/\b\(function tiny-tv\)\b/d' ~/.bash_aliases
 sudo sed -i '/\b\(function backlight\)\b/d' ~/.bash_aliases
 echo "# Tiny TV" | sudo tee -a ~/.bash_aliases > /dev/null
-sudo sed -i '$ a function tiny-tv { sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
-sudo sed -i '$ a function tiny-tv-persist { screen sudo python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv { python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-persist { screen python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
-sudo sed -i '$ a function tiny-tv-start { sudo systemctl start tiny-tv; }' ~/.bash_aliases
-sudo sed -i '$ a function tiny-tv-stop { sudo systemctl stop tiny-tv; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-start { systemctl start tiny-tv; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-stop { systemctl stop tiny-tv; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-update { wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-tiny-tv.sh -O ~/install-tiny-tv.sh && sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh; }' ~/.bash_aliases
-sudo sed -i '$ a function backlight { sudo python3 ~/tiny-tv/backlight.py "$@"; }' ~/.bash_aliases
+sudo sed -i '$ a function backlight { python3 ~/tiny-tv/backlight.py "$@"; }' ~/.bash_aliases
 echo -e 'You may use \e[1mtiny-tv <options>\e[0m to launch the program.'
 echo ''
 echo ''
