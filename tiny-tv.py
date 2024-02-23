@@ -1,5 +1,5 @@
 from functions import Echo, Console
-from backlight import Backlight
+from backlight import BacklightControl
 from datetime import datetime
 from sshkeyboard import listen_keyboard, stop_listening
 from time import sleep
@@ -22,7 +22,7 @@ os.environ['TERM'] = 'xterm-256color'
 
 console = Console()
 echo = Echo()
-backlight = Backlight()
+backlight = BacklightControl()
 
 # === Argument Handling ========================================================
 
@@ -183,7 +183,7 @@ def playVideo(videoFullPath):
 		print('Playing' + videoFullPath)
 		player.set_media(media)
 		player.audio_set_volume(volume)
-		backlight.powerState = 'off'
+		backlight.fadeOn()
 		player.play()
 		sleep(5)
 		
@@ -197,7 +197,7 @@ def playVideo(videoFullPath):
 
 		isPlaying = False
 		stop_listening()
-		backlight.powerState = 'off'
+		backlight.fadeOff()
 		return True
 	except Exception as ex:
 		print ('\n ERROR: ' + str(ex))
@@ -208,7 +208,7 @@ def playVideo(videoFullPath):
 
 try: 
 	os.chdir('/home/pi')
-	backlight.powerState = 'off'
+	backlight.off()
 	print('\n Tiny TV ' + version )
 	print('\n ----------------------------------------------------------------------\n')
 	print('\n Press [Ctrl]-C to exit. \n')
@@ -303,11 +303,10 @@ try:
 	# --- Playback ---------------------------------------------------------
 
 	playCount = 0
-	backlight.powerState = 'off'
+	backlight.off()
 	while playCount >= 0:
 		playCount += 1
 		console.info('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
-		
 		
 		if (video.lower() == 'category'):
 			videosToPlay = glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True)
@@ -323,13 +322,12 @@ try:
 		else:
 			sleep(5)
 		
+	backlight.on()
 	sys.exit(0)
+
 
 except KeyboardInterrupt:
-	backlight.powerState = 'off'
+	backlight.on()
 	echo.on()
 	sleep(1)
-	sys.exit(0)
-
-else:
 	sys.exit(0)

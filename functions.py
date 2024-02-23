@@ -2,7 +2,7 @@ import logging
 import os
 import subprocess
 
-logPath = '/home/pi/logs/camera.timelapse.log'
+logPath = '/home/pi/logs/tiny-tv.log'
 
 # === Echo Control =============================================================
 
