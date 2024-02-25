@@ -58,7 +58,7 @@ tiny-tv-update # reinstalls Tiny TV program
 
 ### Playback Controls
 
-You can control the device from either a Bluetooth keyboard or via an SSH connection from another machine.   
+You can control the device from a Bluetooth keyboard.   
 
 |Key|Action|
 |---|---|

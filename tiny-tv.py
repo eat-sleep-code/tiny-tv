@@ -1,7 +1,7 @@
-from functions import Echo, Console
-from backlight import BacklightControl
 from datetime import datetime
-from sshkeyboard import listen_keyboard, stop_listening
+from backlight import BacklightControl
+from functions import Echo, Console
+from pynput.keyboard import Key, Listener
 from time import sleep
 import argparse
 import glob
@@ -16,7 +16,7 @@ import vlc
 import yt_dlp
 
 
-version = '2024.02.22'
+version = '2024.02.25'
 
 os.environ['TERM'] = 'xterm-256color'
 
@@ -102,14 +102,19 @@ player = instance.media_player_new()
 # ------------------------------------------------------------------------------
 		
 playCount = 0
-isPlaying = False
 isPaused = False
 
 
 # === Keyboard Watcher ========================================================
 
 def watchForKeyPress():
-	listen_keyboard(on_press=handleKeyPress)
+	try:
+		with Listener(on_press=handleKeyPress) as listener:
+			listener.join()
+	except:
+		pass
+	finally: 
+			listener.stop()
 			
 def handleKeyPress(key):
 	global instance 
@@ -119,42 +124,40 @@ def handleKeyPress(key):
 	global minVolume
 	global maxVolume
 	global volumeGradiation
-	global isPlaying
 	global isPaused
-	if key == '+' and volume < (maxVolume - volumeGradiation):
-		volume = volume + volumeGradiation
-		console.info('Volume:' + str(volume) + '%')
-		player.audio_set_volume(volume)
-	elif key == '-' and volume > (minVolume + volumeGradiation):
-		volume = volume - volumeGradiation
-		console.info('Volume:' + str(volume) + '%')
-		player.audio_set_volume(volume)
-	elif key == 'space' and isPaused == False:
-		isPaused = True
-		isPlaying = True
-		console.info('Pausing playback...')
-		player.set_pause(1)
-	elif key == 'space' and isPaused == True:
-		isPlaying = True
-		isPaused = False
-		console.info('Resuming playback...')
-		player.set_pause(0)
-	elif key == 'left':
-		console.info('Restarting current video...')
-		player.set_position(0)
-	elif key == 'right':
-		console.info('Playing next video in playlist...')  
-		isPaused = False
-		isPlaying = False
-		player.stop() 
-	elif key == 'q':
-		isPaused = False
-		isPlaying = False
-		playCount = -10
-		player.stop()
-		echo.on()
-		os.kill(os.getpid(), signal.SIGKILL)
-		sys.exit(0)
+	try:
+		if key == '+' and volume < (maxVolume - volumeGradiation):
+			volume = volume + volumeGradiation
+			console.info('Volume:' + str(volume) + '%')
+			player.audio_set_volume(volume)
+		elif key == '-' and volume > (minVolume + volumeGradiation):
+			volume = volume - volumeGradiation
+			console.info('Volume:' + str(volume) + '%')
+			player.audio_set_volume(volume)
+		elif key == 'space' and isPaused == False:
+			isPaused = True
+			console.info('Pausing playback...')
+			player.set_pause(1)
+		elif key == 'space' and isPaused == True:
+			isPaused = False
+			console.info('Resuming playback...')
+			player.set_pause(0)
+		elif key == 'left':
+			console.info('Restarting current video...')
+			player.set_position(0)
+		elif key == 'right':
+			console.info('Playing next video in playlist...')  
+			isPaused = False
+			player.stop() 
+		elif key == 'q':
+			isPaused = False
+			playCount = -10
+			player.stop()
+			echo.on()
+			os.kill(os.getpid(), signal.SIGKILL)
+			sys.exit(0)
+	except: 
+		pass
 
 # === Playback Functions ======================================================
 
@@ -172,31 +175,21 @@ def getVideoPath(inputPath):
 def playVideo(videoFullPath):
 	global instance
 	global player
-	global isPlaying
 	global isPaused
 	global volume
-	global maxVolume
-	global minVolume
+
 	try:
 		player = instance.media_player_new()
 		media = instance.media_new(videoFullPath)
 		print('Playing' + videoFullPath)
 		player.set_media(media)
 		player.audio_set_volume(volume)
+		isPaused = False
 		backlight.fadeOn()
 		player.play()
-		sleep(5)
-		
-		keyWatcherThread = threading.Thread(target=watchForKeyPress)
-		keyWatcherThread.start()
-
-		isPlaying = True
-		isPaused = False
-		while player.is_playing() == True or isPaused == True:
-			sleep(1)
-
-		isPlaying = False
-		stop_listening()
+		sleep(1.5)
+		duration = player.get_length() / 1000
+		sleep(duration)
 		backlight.fadeOff()
 		return True
 	except Exception as ex:
@@ -303,6 +296,8 @@ try:
 	# --- Playback ---------------------------------------------------------
 
 	playCount = 0
+	keyWatcherThread = threading.Thread(target=watchForKeyPress)
+	keyWatcherThread.start()
 	backlight.off()
 	while playCount >= 0:
 		playCount += 1
@@ -313,20 +308,20 @@ try:
 			if shuffle == True:
 				random.shuffle(videosToPlay)
 			for videoFullPath in videosToPlay:
-				videoPlayed = playVideo(videoFullPath)
+				playVideo(videoFullPath)
 		else:
 			videoFullPath = videoCategoryFolder + str(video)
-			videoPlayed = playVideo(videoFullPath)
+			playVideo(videoFullPath)
 		if loop == False:
 			break
 		else:
-			sleep(5)
-		
+			sleep(1.5)
 	backlight.on()
 	sys.exit(0)
 
 
 except KeyboardInterrupt:
+	player.stop()
 	backlight.on()
 	echo.on()
 	sleep(1)

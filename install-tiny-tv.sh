@@ -7,10 +7,22 @@ echo -e ''
 echo -e '\033[93mUpdating package repositories... \033[0m'
 sudo apt update
 
+
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
 sudo apt install -y git python3 python3-pip vlc ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth
-sudo pip3 install sshkeyboard python-vlc yt-dlp rpi_backlight --force --break-system-packages
+
+
+sudo echo ''
+echo -e '\033[93mProvisioning Python virtual environment... \033[0m'
+sudo mkdir -p /home/pi/tiny-tv-venv
+sudo chmod +rw /home/pi/tiny-tv-venv
+sudo python3 -m venv /home/pi/tiny-tv-venv
+sudo chown -R $USER:$USER /home/pi/tiny-tv-venv
+
+
+echo -e '\033[93mInstalling Python libraries... \033[0m'
+sudo /home/pi/tiny-tv-venv/bin/pip3 install pynput python-vlc yt-dlp rpi_backlight --force
 echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
 
 echo ''
@@ -20,6 +32,7 @@ sudo chmod +rw /home/pi/logs
 sudo sed -i '\|^tmpfs /home/pi/logs|d' /etc/fstab
 sudo sed -i '$ a tmpfs /home/pi/logs tmpfs defaults,noatime,nosuid,size=16m 0 0' /etc/fstab
 sudo mount -a
+sudo chown -R $USER:$USER /home/pi/logs
 
 echo ''
 echo -e '\033[93mInstalling Tiny TV... \033[0m'
@@ -45,8 +58,8 @@ sudo touch ~/.bash_aliases
 sudo sed -i '/\b\(function tiny-tv\)\b/d' ~/.bash_aliases
 sudo sed -i '/\b\(function backlight\)\b/d' ~/.bash_aliases
 echo "# Tiny TV" | sudo tee -a ~/.bash_aliases > /dev/null
-sudo sed -i '$ a function tiny-tv { python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
-sudo sed -i '$ a function tiny-tv-persist { screen python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv { /home/pi/tiny-tv-venv/bin/python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-persist { screen /home/pi/tiny-tv-venv/bin/python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-start { systemctl start tiny-tv; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-stop { systemctl stop tiny-tv; }' ~/.bash_aliases

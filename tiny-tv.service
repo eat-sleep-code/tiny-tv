@@ -1,9 +1,8 @@
-
 [Unit]
 Description=Tiny TV Service
 
 [Service]
-ExecStart=/usr/bin/python3 /home/pi/tiny-tv/tiny-tv.py 'category' --category 'cartoons' --shuffle 'True' --volume 0
+ExecStart=/home/pi/tiny-tv-venv/bin/python3 /home/pi/tiny-tv/tiny-tv.py 'category' --category 'cartoons' --shuffle True --volume 0
 Restart=always
 StandardOutput=syslog
 StandardError=syslog
