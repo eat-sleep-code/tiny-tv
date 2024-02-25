@@ -33,6 +33,7 @@ sudo sed -i '\|^tmpfs /home/pi/logs|d' /etc/fstab
 sudo sed -i '$ a tmpfs /home/pi/logs tmpfs defaults,noatime,nosuid,size=16m 0 0' /etc/fstab
 sudo mount -a
 sudo chown -R $USER:$USER /home/pi/logs
+sudo systemctl daemon-reload
 
 echo ''
 echo -e '\033[93mInstalling Tiny TV... \033[0m'
