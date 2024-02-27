@@ -1,24 +1,24 @@
 from datetime import datetime
 from backlight import BacklightControl
 from functions import Echo, Console
-from pynput.keyboard import Key, Listener
 from time import sleep
 import argparse
 import glob
 import os
+import pidfile
 import random
 import signal
 import shutil
 import subprocess
 import sys
-import threading
 import vlc
 import yt_dlp
 
 
-version = '2024.02.25'
+version = '2024.02.26'
 
 os.environ['TERM'] = 'xterm-256color'
+##print(os.environ)
 
 console = Console()
 echo = Echo()
@@ -41,6 +41,7 @@ args = parser.parse_args()
 
 
 input = args.input or ''
+pidFilePath = '/home/pi/tiny-tv/tiny-tv.pid'
 
 # ------------------------------------------------------------------------------
 
@@ -107,15 +108,6 @@ isPaused = False
 
 # === Keyboard Watcher ========================================================
 
-def watchForKeyPress():
-	try:
-		with Listener(on_press=handleKeyPress) as listener:
-			listener.join()
-	except:
-		pass
-	finally: 
-			listener.stop()
-			
 def handleKeyPress(key):
 	global instance 
 	global player
@@ -165,7 +157,7 @@ def getVideoPath(inputPath):
 	try:
 		os.makedirs(inputPath, exist_ok = True)
 	except OSError:
-		print ('\n ERROR: Creation of the output folder ' + inputPath + ' failed!' )
+		console.error('Creation of the output folder ' + inputPath + ' failed!' )
 		echo.on()
 		quit()
 	else:
@@ -181,19 +173,22 @@ def playVideo(videoFullPath):
 	try:
 		player = instance.media_player_new()
 		media = instance.media_new(videoFullPath)
-		print('Playing' + videoFullPath)
-		player.set_media(media)
-		player.audio_set_volume(volume)
+		console.info('Playing' + videoFullPath)
 		isPaused = False
-		backlight.fadeOn()
-		player.play()
-		sleep(1.5)
-		duration = player.get_length() / 1000
-		sleep(duration)
-		backlight.fadeOff()
+		if "SSH_CONNECTION" in os.environ:
+			console.warn('Tiny TV launched from an SSH session.  Video(s) will not be displayed.')
+		else:
+			player.set_media(media)
+			player.audio_set_volume(volume)
+			backlight.fadeOn()
+			player.play()
+			sleep(1.5)
+			duration = player.get_length() / 1000
+			sleep(duration)
+			backlight.fadeOff()
 		return True
 	except Exception as ex:
-		print ('\n ERROR: ' + str(ex))
+		console.error(str(ex))
 		return False
 
 
@@ -201,128 +196,137 @@ def playVideo(videoFullPath):
 
 try: 
 	os.chdir('/home/pi')
-	backlight.off()
-	print('\n Tiny TV ' + version )
-	print('\n ----------------------------------------------------------------------\n')
-	print('\n Press [Ctrl]-C to exit. \n')
-	
-	input = input.strip()
-	if input.find('.') == -1 and input.find(';') == -1 and input.lower() != 'category':
-		input = input + '.mp4'
-	video = input
-	
-	
-	# --- YouTube Download -------------------------------------------------
-
-	if video.lower().find('youtube.com') != -1:
-		print(' Starting download of video... ')
-		downloadHeight = 720
-		if maximumVideoHeight >= 4320: # Future product
-			downloadHeight = 4320
-		elif maximumVideoHeight >= 2160: # Minimum Raspberry Pi 4B
-			downloadHeight = 2160
-		elif maximumVideoHeight >= 1080: # Minimum Raspberry Pi 3B+
-			downloadHeight = 1080
-
-		try:
-			youtubeDownloadOptions = { 
-				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
-				'format': 'best[height=' + str(downloadHeight) + ']'
-			}
-			with yt_dlp.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
-				info = youtubeDownload.extract_info(video)
-				video = info.get('id', None) + '.' + info.get('ext', None)
-		except Exception as ex:
-			console.info(' Falling back to best quality video... ')
-			youtubeDownloadOptions = { 
-				'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
-				'format': 'best'
-			}
-			with yt_dlp.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
-				info = youtubeDownload.extract_info(video)
-				video = info.get('id', None) + '.' + info.get('ext', None)
-			pass
-
-		console.info(' Setting the owner of the file to current user...')
-		try:
-			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
-		except:
-			pass
-		
-		if saveAs.lower() != 'youtube-id':
-			try:
-				os.rename(videoCategoryFolder + video, videoCategoryFolder + saveAs)
-				video = saveAs
-			except Exception as ex:
-				console.info(str(ex))
+	console.print('\n Tiny TV ' + version )
+	console.print('----------------------------------------------------------------------')
+	console.print('\n Press [Ctrl]-C to exit. \n')
 	
 
-	# --- Pillar Box / Letter Box Removal ----------------------------------
+	try:
+		with pidfile.PIDFile(pidFilePath):
+			backlight.off()
+			input = input.strip()
+			if input.find('.') == -1 and input.find(';') == -1 and input.lower() != 'category':
+				input = input + '.mp4'
+			video = input
+			
+			
+			# --- YouTube Download -------------------------------------------------
 
-	if removeVerticalBars == True:
-		console.info(' Starting removal of vertical black bars (this will take a while)... ')
-		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
-		os.remove(videoCategoryFolder + video)
-		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
-		try:
-			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
-		except:
-			pass
+			if video.lower().find('youtube.com') != -1:
+				console.info(' Starting download of video... ')
+				downloadHeight = 720
+				if maximumVideoHeight >= 4320: # Future product
+					downloadHeight = 4320
+				elif maximumVideoHeight >= 2160: # Minimum Raspberry Pi 4B
+					downloadHeight = 2160
+				elif maximumVideoHeight >= 1080: # Minimum Raspberry Pi 3B+
+					downloadHeight = 1080
 
-	elif removeHorizontalBars == True:
-		console.info(' Starting removal of horizontal black bars (this will take a while)... ')
-		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
-		os.remove(videoCategoryFolder + video)
-		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
-		try:
-			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
-		except:
-			pass
-		
+				try:
+					youtubeDownloadOptions = { 
+						'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
+						'format': 'best[height=' + str(downloadHeight) + ']'
+					}
+					with yt_dlp.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
+						info = youtubeDownload.extract_info(video)
+						video = info.get('id', None) + '.' + info.get('ext', None)
+				except Exception as ex:
+					console.info(' Falling back to best quality video... ')
+					youtubeDownloadOptions = { 
+						'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
+						'format': 'best'
+					}
+					with yt_dlp.YoutubeDL(youtubeDownloadOptions) as youtubeDownload:
+						info = youtubeDownload.extract_info(video)
+						video = info.get('id', None) + '.' + info.get('ext', None)
+					pass
 
-	# --- Resize only ------------------------------------------------------
+				console.info(' Setting the owner of the file to current user...')
+				try:
+					shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+				except:
+					pass
+				
+				if saveAs.lower() != 'youtube-id':
+					try:
+						os.rename(videoCategoryFolder + video, videoCategoryFolder + saveAs)
+						video = saveAs
+					except Exception as ex:
+						console.info(str(ex))
+			
 
-	if resize == True and removeVerticalBars == False and removeHorizontalBars == False:
-		console.info(' Starting resize to maximum video height (this will take a while)... ')
-		subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
-		os.remove(videoCategoryFolder + video)
-		os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
-		try:
-			shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
-		except:
-			pass
-		
+			# --- Pillar Box / Letter Box Removal ----------------------------------
+
+			if removeVerticalBars == True:
+				console.info(' Starting removal of vertical black bars (this will take a while)... ')
+				subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=ih/3*4:ih,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+				os.remove(videoCategoryFolder + video)
+				os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
+				try:
+					shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+				except:
+					pass
+
+			elif removeHorizontalBars == True:
+				console.info(' Starting removal of horizontal black bars (this will take a while)... ')
+				subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "crop=iw:iw/16*9,scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"', shell=True)
+				os.remove(videoCategoryFolder + video)
+				os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
+				try:
+					shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+				except:
+					pass
+				
+
+			# --- Resize only ------------------------------------------------------
+
+			if resize == True and removeVerticalBars == False and removeHorizontalBars == False:
+				console.info(' Starting resize to maximum video height (this will take a while)... ')
+				subprocess.call('ffmpeg -i "' + videoCategoryFolder + video + '" -filter:v "scale=-2:' + str(maximumVideoHeight) + ',setsar=1" -c:v libx264 -crf ' + str(quality) + ' -preset veryfast -c:a copy "' + videoCategoryFolder + '~' + video + '"' , shell=True)
+				os.remove(videoCategoryFolder + video)
+				os.rename(videoCategoryFolder + '~' + video, videoCategoryFolder + video)
+				try:
+					shutil.chown(videoCategoryFolder + video, user='pi', group='pi')
+				except:
+					pass
+				
+			
+			# --- Playback ---------------------------------------------------------
+
+			playCount = 0
+			backlight.off()
+			while playCount >= 0:
+				playCount += 1
+				console.info('Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
+				
+				if (video.lower() == 'category'):
+					videosToPlay = glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True)
+					if shuffle == True:
+						random.shuffle(videosToPlay)
+					for videoFullPath in videosToPlay:
+						playVideo(videoFullPath)
+				else:
+					videoFullPath = videoCategoryFolder + str(video)
+					playVideo(videoFullPath)
+				if loop == False:
+					break
+				else:
+					sleep(1.5)
+
+			os.remove(pidFilePath)
+			backlight.on()
+			sys.exit(0)
+
+	except pidfile.AlreadyRunningError:
+		console.error('Another instance of Tiny TV is already running.   Exiting...')
+		echo.on()
+		sleep(1)
+		sys.exit(0)
+	except Exception:
+		pass
 	
-	# --- Playback ---------------------------------------------------------
-
-	playCount = 0
-	keyWatcherThread = threading.Thread(target=watchForKeyPress)
-	keyWatcherThread.start()
-	backlight.off()
-	while playCount >= 0:
-		playCount += 1
-		console.info('\n Starting playback (' + str(playCount) + ') at ' + datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' ...')
-		
-		if (video.lower() == 'category'):
-			videosToPlay = glob.glob(videoCategoryFolder + '**/*.mp4', recursive = True)
-			if shuffle == True:
-				random.shuffle(videosToPlay)
-			for videoFullPath in videosToPlay:
-				playVideo(videoFullPath)
-		else:
-			videoFullPath = videoCategoryFolder + str(video)
-			playVideo(videoFullPath)
-		if loop == False:
-			break
-		else:
-			sleep(1.5)
-	backlight.on()
-	sys.exit(0)
-
 
 except KeyboardInterrupt:
-	player.stop()
 	backlight.on()
 	echo.on()
-	sleep(1)
 	sys.exit(0)

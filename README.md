@@ -56,23 +56,6 @@ tiny-tv-update # reinstalls Tiny TV program
 
 ---
 
-### Playback Controls
-
-You can control the device from a Bluetooth keyboard.   
-
-|Key|Action|
-|---|---|
-| - | Decrease volume <em> (in increments of 5%)</em> |
-| + | Increase volume <em> (in increments of 5%)</em> |
-| Space | Pause/Resume |
-| q | Exit |
-| Left | Restart current video |
-| Right | Advanced to next video |
-
-
-
----
-
 ### Examples
 
 #### To download, crop, and play a video from YouTube:
@@ -134,15 +117,11 @@ defaults.pcm.card 1
 ## Autostart Tiny TV
 Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here is how!
 
-### Via *.profile* file
-* Add a line to the very end of ~/.profile such as `tiny-tv 'category' --category 'cartoons'` and save the changes to the file.
-* Restart the Tiny TV.
-*Note that this method avoids many permissions issue which may arise when attemptint to use the **systemd** method below.   However, it will attempt to start the Tiny TV program every time you login to via SSH, etc.   You may need to press CTRL-C to abort the loading of the application in these instances.*
 
-### Via systemd:
-* Review `/etc/systemd/system/tiny-tv.service`
+* Review the `AUTOSTARTCOMMAND` command in `~/tiny-tv/setup-autostart-tiny-tv.sh`
    * If you would like to add any of aforementioned options you may do so by editing the service file.
-* Run `~/tiny-tv/install-tiny-tv.service.sh`
+* Run `~/tiny-tv/setup-autostart-tiny-tv.sh`
+* Restart the Tiny TV.
 
 
 > [!TIP]

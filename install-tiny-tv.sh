@@ -22,8 +22,9 @@ sudo chown -R $USER:$USER /home/pi/tiny-tv-venv
 
 
 echo -e '\033[93mInstalling Python libraries... \033[0m'
-sudo /home/pi/tiny-tv-venv/bin/pip3 install pynput python-vlc yt-dlp rpi_backlight --force
+sudo /home/pi/tiny-tv-venv/bin/pip3 install python-vlc yt-dlp rpi_backlight python-pidfile --force
 echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
+
 
 echo ''
 echo -e '\033[93mProvisioning logs... \033[0m'
@@ -35,6 +36,7 @@ sudo mount -a
 sudo chown -R $USER:$USER /home/pi/logs
 sudo systemctl daemon-reload
 
+
 echo ''
 echo -e '\033[93mInstalling Tiny TV... \033[0m'
 cd ~
@@ -42,15 +44,8 @@ sudo rm -Rf ~/tiny-tv
 sudo git clone https://github.com/eat-sleep-code/tiny-tv
 sudo chown -R $USER:$USER tiny-tv
 cd tiny-tv
-sudo chmod +x tiny-tv.py
-sudo chmod +x backlight.py
-
-echo ''
-echo -e '\033[93mCreating Service... \033[0m'
-sudo mv tiny-tv.service /etc/systemd/system/tiny-tv.service
-sudo chown root:root /etc/systemd/system/tiny-tv.service
 sudo chmod +x *.sh 
-echo 'Please see the README file for more information on configuring the service.'
+
 
 cd ~
 echo ''
