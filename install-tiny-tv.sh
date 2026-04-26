@@ -10,7 +10,7 @@ sudo apt update
 
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
-sudo apt install -y git python3 python3-pip mpv ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth
+sudo apt install -y git python3 python3-pip mpv ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth quickjs
 
 
 sudo echo ''
@@ -22,7 +22,7 @@ sudo chown -R $USER:$USER /home/pi/tiny-tv-venv
 
 
 echo -e '\033[93mInstalling Python libraries... \033[0m'
-sudo /home/pi/tiny-tv-venv/bin/pip3 install python-mpv yt-dlp rpi_backlight python-pidfile --force
+sudo /home/pi/tiny-tv-venv/bin/pip3 install python-mpv yt-dlp yt-dlp-ejs rpi_backlight python-pidfile --force
 echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
 
 
