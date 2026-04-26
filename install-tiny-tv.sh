@@ -59,7 +59,7 @@ sudo sed -i '$ a function tiny-tv-persist { screen /home/pi/tiny-tv-venv/bin/pyt
 sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-start { systemctl start tiny-tv; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-stop { systemctl stop tiny-tv; }' ~/.bash_aliases
-sudo sed -i '$ a function tiny-tv-test { /home/pi/tiny-tv-venv/bin/python3 ~/tiny-tv/tiny-tv.py https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --removeVerticalBars }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-test { /home/pi/tiny-tv-venv/bin/python3 /home/pi/tiny-tv/tiny-tv.py "https://www.youtube.com/watch?v=h8NrKjJPAuw" --saveAs "Bugs Bunny.mp4" --category "cartoons" --removeVerticalBars; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-update { wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-tiny-tv.sh -O ~/install-tiny-tv.sh && sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh; }' ~/.bash_aliases
 echo -e 'You may use \e[1mtiny-tv <options>\e[0m to launch the program.'
 echo ''
