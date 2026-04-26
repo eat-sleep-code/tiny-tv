@@ -73,9 +73,8 @@ quit_requested = False
 # === Player Setup =============================================================
 
 player = mpv.MPV(
-    vo='drm',
+    vo='fbdev',
     fullscreen=True,
-    hwdec='auto',
     ao='alsa',
     really_quiet=True,
     input_default_bindings=False,
