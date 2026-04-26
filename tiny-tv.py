@@ -182,20 +182,19 @@ try:
             elif maximumVideoHeight >= 1080:
                 downloadHeight = 1080
 
+            formatString = f'best[height<={downloadHeight}]/best[height<={downloadHeight*2}]/best'
             youtubeDownloadOptions = {
                 'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
-                'format': 'best[height=' + str(downloadHeight) + ']'
+                'format': formatString
             }
             try:
                 with yt_dlp.YoutubeDL(youtubeDownloadOptions) as ydl:
                     info = ydl.extract_info(video)
                     video = info.get('id', None) + '.' + info.get('ext', None)
-            except Exception:
-                console.info('Falling back to best available quality...')
-                youtubeDownloadOptions['format'] = 'best'
-                with yt_dlp.YoutubeDL(youtubeDownloadOptions) as ydl:
-                    info = ydl.extract_info(video)
-                    video = info.get('id', None) + '.' + info.get('ext', None)
+            except Exception as ex:
+                console.error('Download failed: ' + str(ex))
+                echo.on()
+                sys.exit(1)
 
             console.info('Setting file owner to current user...')
             try:
