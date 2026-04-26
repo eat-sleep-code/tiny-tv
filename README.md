@@ -9,14 +9,30 @@ Do you remember the classic console TV's of the second half of the last century?
 
 ## Getting Started
 
-- Use [Raspberry Pi Imager](https://www.raspberrypi.com/software) to install Raspberry Pi OS Lite *(Bookworm)* on a microSD card
+- Use [Raspberry Pi Imager](https://www.raspberrypi.com/software) to install Raspberry Pi OS Lite *(Bookworm or Trixie)* on a microSD card
 - Use [raspi-config](https://www.raspberrypi.org/documentation/configuration/raspi-config.md) to:
   - Expand your filesystem
   - Set your locale and keyboard options
   - Set up your WiFi connection
   - Select your Audio device
   - Enable SSH
-- Connect your display to your Raspberry Pi and configure according to the manufacturer's instructions
+- Connect your display to your Raspberry Pi
+
+---
+
+## Display Setup *(iUniker 2.8" MZDPI — optional)*
+
+If you are using the iUniker 2.8" MZDPI display (hardware version B), run the display installer after flashing your SD card and before running the main installation:
+
+```sh
+wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-mzdpi-display.sh -O ~/install-mzdpi-display.sh
+sudo chmod +x ~/install-mzdpi-display.sh && ~/install-mzdpi-display.sh
+```
+
+This script configures the DPI interface, places the display config in the correct location for Raspberry Pi OS Bookworm/Trixie (`/boot/firmware/`), and disables KMS which conflicts with the DPI output on this display.
+
+> [!NOTE]
+> Other displays should be configured according to their manufacturer's instructions before proceeding.
 
 ---
 
@@ -47,12 +63,12 @@ tiny-tv-update # reinstalls Tiny TV program
 + _--saveAs_ : Enter the name you would like the file saved as     *(Used if downloading from YouTube only)*
 + _--category_ : Select the category     *(This will set the subfolder, for example `--category cartoons` will use the `/home/pi/videos/cartoons` folder)*
 + _--maximumVideoHeight_ : Set the maximum height (in pixels) for downloaded videos     *(default: 480)*
-+ _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file.  This time-intensive process will also resize the video to the maximum video height.   *(default: False)*
-+ _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file.  This time-intensive process will also resize the video to the maximum video height.    *(default: False)*
++ _--removeVerticalBars_ : Remove the vertical black bars (pillar box) from the input file.  This time-intensive process will also resize the video to the maximum video height.
++ _--removeHorizontalBars_ : Remove the horizontal black bars (letter box) from the input file.  This time-intensive process will also resize the video to the maximum video height.
 + _--resize_ : Resize the video to the maximum video height.  This is a time-intensive process.
-+ _--volume_ : Set the initial volume percent *(default: 100, min: 0, max: 100`)*
++ _--volume_ : Set the initial volume percent *(default: 100, min: 0, max: 100)*
 + _--loop_ : Set whether video plays continuously in a loop *(default: True)*
-+ _--shuffle_ : Set whether category-based playback is shuffled *(default: False)*
++ _--shuffle_ : Shuffle the playback order when using category mode
 
 ---
 
@@ -61,7 +77,7 @@ tiny-tv-update # reinstalls Tiny TV program
 #### To download, crop, and play a video from YouTube:
 
 ```sh
-tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --removeVerticalBars True 
+tiny-tv https://www.youtube.com/watch?v=h8NrKjJPAuw --saveAs 'Bugs Bunny.mp4' --category 'cartoons' --removeVerticalBars
 ```
 
 The default video height is 480px.  This is an ideal resolution for a true Tiny TV.  If you are utilizing a more powerful Raspberry Pi and a higher resolution screen, you may alter the maximum video height.
@@ -175,16 +191,7 @@ Consider your case design, some case construction steps may be inserted before, 
 
 1) Replace the micro SD card and boot up the Raspberry Pi.
 
-1) Install the software, following the manufacturer's [instructions](https://github.com/tianyoujian/MZDPI).
-
-   ```sh
-   cd ~/
-   git clone https://github.com/tianyoujian/MZDPI.git
-   cd MZDPI/vga
-   sudo chmod +x mzdpi-vga-autoinstall-online
-   sudo ./mzdpi-vga-autoinstall-online
-   sudo reboot
-   ```
+1) Run the display installer as outlined in the [Display Setup](#display-setup-iuniker-28-mzdpi--optional) section above, then reboot.
 1) Remove your micro SD card from the Raspberry Pi.
 
 #### Power Leads
