@@ -186,7 +186,7 @@ try:
             youtubeDownloadOptions = {
                 'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
                 'format': formatString,
-                'js_runtimes': 'quickjs',
+                'js_runtimes': {'quickjs': {}},
             }
             try:
                 with yt_dlp.YoutubeDL(youtubeDownloadOptions) as ydl:
