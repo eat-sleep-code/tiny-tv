@@ -17,7 +17,7 @@ try:
 
 		def off(self):
 			try:
-				backlight.brightness = 100
+				backlight.brightness = 0
 			except:
 				pass
 
@@ -25,7 +25,7 @@ try:
 
 		def fadeOn(self, fadeDuration = 1):
 			try:
-				with backlight.fade(durartion = fadeDuration):
+				with backlight.fade(duration = fadeDuration):
 					backlight.brightness = 100
 			except:
 				pass
@@ -34,7 +34,7 @@ try:
 
 		def fadeOff(self, fadeDuration = 1):
 			try:
-				with backlight.fade(durartion = fadeDuration):
+				with backlight.fade(duration = fadeDuration):
 					backlight.brightness = 0
 			except:
 				pass
