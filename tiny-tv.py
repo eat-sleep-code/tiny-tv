@@ -185,7 +185,8 @@ try:
             formatString = f'best[height<={downloadHeight}]/best[height<={downloadHeight*2}]/best'
             youtubeDownloadOptions = {
                 'outtmpl': videoCategoryFolder + '%(id)s.%(ext)s',
-                'format': formatString
+                'format': formatString,
+                'js_runtimes': 'quickjs',
             }
             try:
                 with yt_dlp.YoutubeDL(youtubeDownloadOptions) as ydl:
