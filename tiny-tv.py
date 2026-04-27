@@ -76,7 +76,7 @@ isPaused            = False
 
 # === Player Setup =============================================================
 
-instance = vlc.Instance('--vout=fb --fb-dev=/dev/fb0 --aout=alsa --no-osd --intf=dummy --no-video-title-show --really-quiet')
+instance = vlc.Instance('--vout=fb --aout=alsa --no-osd --intf=dummy --no-video-title-show --really-quiet')
 player = instance.media_player_new()
 player.audio_set_volume(volume)
 
