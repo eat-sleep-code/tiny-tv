@@ -29,7 +29,7 @@ wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-
 sudo chmod +x ~/install-mzdpi-display.sh && ~/install-mzdpi-display.sh
 ```
 
-This script configures the DPI interface, places the display config in the correct location for Raspberry Pi OS Bookworm/Trixie (`/boot/firmware/`), and disables KMS which conflicts with the DPI output on this display.
+This script configures the display using the modern KMS DPI panel approach, which provides correct color output on Raspberry Pi OS Bookworm/Trixie. It also handles migration from the legacy DPI configuration if previously installed.
 
 > [!NOTE]
 > Other displays should be configured according to their manufacturer's instructions before proceeding.
