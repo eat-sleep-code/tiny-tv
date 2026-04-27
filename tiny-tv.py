@@ -48,6 +48,8 @@ parser.add_argument('--resize', dest='resize', help='Resize without cropping', a
 parser.add_argument('--volume', dest='volume', help='Initial volume percent (0-100)', type=int, default=100)
 parser.add_argument('--loop', dest='loop', help='Loop playback continuously (default: true)', type=parse_bool, default=True)
 parser.add_argument('--shuffle', dest='shuffle', help='Shuffle category playback', action='store_true', default=False)
+parser.add_argument('--hue', dest='hue', help='Hue adjustment (-180 to 180, default: 0)', type=int, default=0)
+parser.add_argument('--saturation', dest='saturation', help='Saturation (0.0 = grayscale, 1.0 = normal, default: 1.0)', type=float, default=1.0)
 args = parser.parse_args()
 
 input_path          = (args.input or '').strip()
@@ -62,6 +64,8 @@ removeHorizontalBars = args.removeHorizontalBars
 resize              = args.resize
 loop                = args.loop
 shuffle             = args.shuffle
+hue                 = max(-180, min(180, args.hue))
+saturation          = max(0.0, min(3.0, args.saturation))
 quality             = 29   # CRF: lower = higher quality, larger file
 
 volume              = max(0, min(100, args.volume))
@@ -76,7 +80,10 @@ isPaused            = False
 
 # === Player Setup =============================================================
 
-instance = vlc.Instance('--vout=fb --aout=alsa --no-osd --intf=dummy --no-video-title-show --quiet --video-filter=adjust --hue=-35')
+vlcOptions = '--vout=fb --aout=alsa --no-osd --intf=dummy --no-video-title-show --quiet'
+if hue != 0 or saturation != 1.0:
+    vlcOptions += f' --video-filter=adjust --hue={hue} --saturation={saturation}'
+instance = vlc.Instance(vlcOptions)
 player = instance.media_player_new()
 player.audio_set_volume(volume)
 
