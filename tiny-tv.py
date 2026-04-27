@@ -4,17 +4,20 @@ from functions import Echo, Console
 from time import sleep
 import argparse
 import glob
-import mpv
 import os
 import pidfile
 import random
 import shutil
 import subprocess
 import sys
+import termios
+import threading
+import tty
+import vlc
 import yt_dlp
 
 
-version = '2026.04.25'
+version = '2026.04.26'
 
 os.environ['TERM'] = 'xterm-256color'
 
@@ -47,82 +50,86 @@ parser.add_argument('--loop', dest='loop', help='Loop playback continuously (def
 parser.add_argument('--shuffle', dest='shuffle', help='Shuffle category playback', action='store_true', default=False)
 args = parser.parse_args()
 
-input_path     = (args.input or '').strip()
-pidFilePath    = '/home/pi/tiny-tv/tiny-tv.pid'
-saveAs         = args.saveAs or 'youtube-id'
+input_path          = (args.input or '').strip()
+pidFilePath         = '/home/pi/tiny-tv/tiny-tv.pid'
+saveAs              = args.saveAs or 'youtube-id'
 maximumVideoHeight  = args.maximumVideoHeight
-category       = args.category or ''
-videoFolder    = '/home/pi/videos/'
+category            = args.category or ''
+videoFolder         = '/home/pi/videos/'
 videoCategoryFolder = videoFolder + category + '/'
 removeVerticalBars  = args.removeVerticalBars
 removeHorizontalBars = args.removeHorizontalBars
-resize         = args.resize
-loop           = args.loop
-shuffle        = args.shuffle
-quality        = 29   # CRF: lower = higher quality, larger file
+resize              = args.resize
+loop                = args.loop
+shuffle             = args.shuffle
+quality             = 29   # CRF: lower = higher quality, larger file
 
-volume         = max(0, min(100, args.volume))
-volumeGradiation = 5
-maxVolume      = 100
-minVolume      = 0
+volume              = max(0, min(100, args.volume))
+volumeGradiation    = 5
+maxVolume           = 100
+minVolume           = 0
 
-playCount      = 0
-quit_requested = False
+playCount           = 0
+quit_requested      = False
+isPaused            = False
 
 
 # === Player Setup =============================================================
 
-player = mpv.MPV(
-    vo='fbdev',
-    fullscreen=True,
-    ao='alsa',
-    really_quiet=True,
-    input_default_bindings=False,
-    input_vo_keyboard=True,
-)
-player.volume = volume
+instance = vlc.Instance('--vout=fb --fb-dev=/dev/fb0 --aout=alsa --no-osd --intf=dummy --no-video-title-show --really-quiet')
+player = instance.media_player_new()
+player.audio_set_volume(volume)
 
 
-@player.on_key_press('q')
-def on_quit():
-    global quit_requested, playCount
-    quit_requested = True
-    playCount = -10
-    echo.on()
-    player.command('stop')
+# === Keyboard Listener ========================================================
 
+def start_keyboard_listener():
+    def _listen():
+        global volume, quit_requested, isPaused, playCount
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(fd)
+            while not quit_requested:
+                ch = sys.stdin.read(1)
+                if not ch:
+                    break
+                if ch in ('q', '\x03'):                         # q or Ctrl-C
+                    quit_requested = True
+                    playCount = -10
+                    player.stop()
+                    echo.on()
+                elif ch == '+':
+                    volume = min(volume + volumeGradiation, maxVolume)
+                    player.audio_set_volume(volume)
+                    console.info('Volume: ' + str(volume) + '%')
+                elif ch == '-':
+                    volume = max(volume - volumeGradiation, minVolume)
+                    player.audio_set_volume(volume)
+                    console.info('Volume: ' + str(volume) + '%')
+                elif ch == ' ':
+                    isPaused = not isPaused
+                    player.set_pause(1 if isPaused else 0)
+                    console.info('Paused' if isPaused else 'Resumed')
+                elif ch == '\x1b':                              # escape sequence
+                    seq = sys.stdin.read(2)
+                    if seq == '[D':                             # left arrow — restart
+                        console.info('Restarting current video...')
+                        player.set_position(0.0)
+                    elif seq == '[C':                           # right arrow — skip
+                        console.info('Skipping to next video...')
+                        player.stop()
+        except Exception:
+            pass
+        finally:
+            try:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            except Exception:
+                pass
 
-@player.on_key_press('+')
-def on_vol_up():
-    global volume
-    volume = min(volume + volumeGradiation, maxVolume)
-    player.volume = volume
-    console.info('Volume: ' + str(volume) + '%')
-
-
-@player.on_key_press('-')
-def on_vol_down():
-    global volume
-    volume = max(volume - volumeGradiation, minVolume)
-    player.volume = volume
-    console.info('Volume: ' + str(volume) + '%')
-
-
-@player.on_key_press('SPACE')
-def on_space():
-    player.pause = not player.pause
-
-
-@player.on_key_press('LEFT')
-def on_restart():
-    console.info('Restarting current video...')
-    player.seek(0, 'absolute-percent')
-
-
-@player.on_key_press('RIGHT')
-def on_next():
-    console.info('Skipping to next video...')
-    player.command('stop')
+    t = threading.Thread(target=_listen, daemon=True)
+    t.start()
+    return t
 
 
 # === Playback Functions =======================================================
@@ -139,15 +146,26 @@ def getVideoPath(inputPath):
 
 
 def playVideo(videoFullPath):
+    global isPaused
     if 'SSH_CONNECTION' in os.environ:
         console.warn('Tiny TV launched from SSH. Video(s) will not be displayed.')
         return True
     try:
         console.info('Playing ' + videoFullPath)
+        media = instance.media_new(videoFullPath)
+        player.set_media(media)
+        player.audio_set_volume(volume)
+        isPaused = False
         backlight.fadeOn()
-        player.play(videoFullPath)
-        player.wait_for_playback()
+        player.play()
+        sleep(0.5)
+        while player.get_state() not in (vlc.State.Ended, vlc.State.Error, vlc.State.Stopped):
+            if quit_requested:
+                break
+            sleep(0.25)
         backlight.fadeOff()
+        player.stop()
+        media.release()
         return True
     except Exception as ex:
         console.error(str(ex))
@@ -168,6 +186,8 @@ try:
         if input_path.find('.') == -1 and input_path.find(';') == -1 and input_path.lower() != 'category':
             input_path = input_path + '.mp4'
         video = input_path
+
+        start_keyboard_listener()
 
 
         # --- YouTube Download -------------------------------------------------
@@ -286,12 +306,14 @@ try:
             elif not quit_requested:
                 sleep(1.5)
 
-        player.terminate()
+        player.release()
+        instance.release()
         try:
             os.remove(pidFilePath)
         except OSError:
             pass
         backlight.on()
+        echo.on()
         sys.exit(0)
 
 except pidfile.AlreadyRunningError:
@@ -301,7 +323,8 @@ except pidfile.AlreadyRunningError:
     sys.exit(1)
 
 except KeyboardInterrupt:
-    player.terminate()
+    player.release()
+    instance.release()
     backlight.on()
     echo.on()
     sys.exit(0)

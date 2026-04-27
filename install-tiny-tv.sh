@@ -10,7 +10,7 @@ sudo apt update
 
 echo ''
 echo -e '\033[93mInstalling prerequisites... \033[0m'
-sudo apt install -y git python3 python3-pip mpv ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth quickjs
+sudo apt install -y git python3 python3-pip vlc ffmpeg fonts-freefont-ttf screen pulseaudio-module-bluetooth quickjs
 
 
 sudo echo ''
@@ -22,7 +22,7 @@ sudo chown -R $USER:$USER /home/pi/tiny-tv-venv
 
 
 echo -e '\033[93mInstalling Python libraries... \033[0m'
-sudo /home/pi/tiny-tv-venv/bin/pip3 install python-mpv yt-dlp yt-dlp-ejs rpi_backlight python-pidfile --force
+sudo /home/pi/tiny-tv-venv/bin/pip3 install python-vlc yt-dlp yt-dlp-ejs rpi_backlight python-pidfile --force
 echo 'SUBSYSTEM=="backlight",RUN+="/bin/chmod 666 /sys/class/backlight/%k/brightness /sys/class/backlight/%k/bl_power"' | sudo tee -a /etc/udev/rules.d/backlight-permissions.rules
 
 
@@ -60,6 +60,7 @@ sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-start { systemctl start tiny-tv; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-stop { systemctl stop tiny-tv; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-test { /home/pi/tiny-tv-venv/bin/python3 /home/pi/tiny-tv/tiny-tv.py "https://www.youtube.com/watch?v=h8NrKjJPAuw" --saveAs "Bugs Bunny.mp4" --category "cartoons" --removeVerticalBars; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-test-category { /home/pi/tiny-tv-venv/bin/python3 /home/pi/tiny-tv/tiny-tv.py "category" --category "cartoons" --volume 50 }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-update { wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-tiny-tv.sh -O ~/install-tiny-tv.sh && sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh; }' ~/.bash_aliases
 echo -e 'You may use \e[1mtiny-tv <options>\e[0m to launch the program.'
 echo ''
