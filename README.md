@@ -153,15 +153,14 @@ Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here i
 If you prefer to download and process videos on a Windows PC before copying them to the Raspberry Pi, use `download-videos.py`.
 
 ### Prerequisites.
-
-- Python: [python.org](https://www.python.org/downloads/)
-- ffmpeg: [ffmpeg.org](https://ffmpeg.org/download.html) (ensure added to your PATH)
-
 ```sh
-pip install yt-dlp
+winget install python3
+winget install ffmpeg
+winget install DenoLand.Deno
 ```
-
-
+```sh
+pip install yt-dlp yt-dlp-ejs
+```
 
 ### Usage
 
