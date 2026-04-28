@@ -17,7 +17,7 @@ import vlc
 import yt_dlp
 
 
-version = '2026.04.26'
+version = '2026.04.28'
 
 os.environ['TERM'] = 'xterm-256color'
 
