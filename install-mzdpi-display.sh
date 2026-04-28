@@ -1,5 +1,5 @@
-# Configures the iUniker 2.8" MZDPI display (hardware version B) on
-# Raspberry Pi OS Bookworm / Trixie.
+# Configures the iUniker/Geekworm 2.8" MZDPI display (hardware version B) on
+# Raspberry Pi OS Trixie.
 
 # --- Legacy DPI configuration -------------------------------------------------
 sudo wget -O /boot/firmware/mzp280v02br.txt https://raw.githubusercontent.com/tianyoujian/MZDPI/master/mzp280v02br/mzp280v02br.txt
@@ -20,32 +20,5 @@ blacklist drm_panel_orientation_quirks
 EOF
 
 sudo systemctl mask modprobe@drm.service 2>/dev/null
-
-# --- Build and install the disable-panel device-tree overlay ------------------
-if ! command -v dtc > /dev/null; then
-    sudo apt install -y device-tree-compiler
-fi
-
-cat > /tmp/disable-panel.dts << 'EOF'
-/dts-v1/;
-/plugin/;
-
-/ {
-    compatible = "brcm,bcm2835";
-
-    fragment@0 {
-        target-path = "/panel";
-        __overlay__ {
-            status = "disabled";
-        };
-    };
-};
-EOF
-
-dtc -@ -I dts -O dtb -o /tmp/disable-panel.dtbo /tmp/disable-panel.dts
-sudo cp /tmp/disable-panel.dtbo /boot/firmware/overlays/
-rm -f /tmp/disable-panel.dts /tmp/disable-panel.dtbo
-
-grep -q "dtoverlay=disable-panel" /boot/firmware/config.txt || echo "dtoverlay=disable-panel" | sudo tee -a /boot/firmware/config.txt
 
 sudo reboot
