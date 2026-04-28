@@ -144,6 +144,61 @@ Want to start the Tiny TV program every time you boot your Raspberry Pi?  Here i
 > If you are using a Raspberry Pi with 1GB &ndash; or less &ndash; of memory, you may wish to increase your SWAP file to match your memory size as outlined in this [third-party guide](https://pimylifeup.com/raspberry-pi-swap-file/).
 
 
+---
+
+---
+
+## Downloading Videos on Windows
+
+If you prefer to download and process videos on a Windows PC before copying them to the Raspberry Pi, use `download-videos.py`.
+
+### Prerequisites.
+
+- Python: [python.org](https://www.python.org/downloads/)
+- ffmpeg: [ffmpeg.org](https://ffmpeg.org/download.html) (ensure added to your PATH)
+
+```sh
+pip install yt-dlp
+```
+
+
+
+### Usage
+
+```sh
+python download-videos.py urls.txt [options]
+```
+
+Create a plain text file with one YouTube URL per line. Lines starting with `#` are ignored:
+
+```
+# Looney Tunes
+https://www.youtube.com/watch?v=h8NrKjJPAuw
+https://www.youtube.com/watch?v=abc123
+```
+
+### Options
+
++ _--output_ : Output folder *(default: `videos`)*
++ _--maximumVideoHeight_ : Maximum video height in pixels *(default: 480)*
++ _--removeVerticalBars_ : Crop pillarbox black bars
++ _--removeHorizontalBars_ : Crop letterbox black bars
++ _--resize_ : Resize to maximum video height without cropping
+
+### Examples
+
+```sh
+# Download to .\videos at 480p
+python download-videos.py urls.txt
+
+# Download to a specific folder and crop vertical bars
+python download-videos.py urls.txt --output C:\videos\cartoons --removeVerticalBars
+
+# Download at 720p
+python download-videos.py urls.txt --maximumVideoHeight 720
+```
+
+Videos are saved using the YouTube title as the filename and converted to MP4. Copy the resulting files to `/home/pi/videos/` (or a category subfolder) on your Raspberry Pi.
 
 ---
 
