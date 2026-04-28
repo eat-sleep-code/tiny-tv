@@ -29,7 +29,7 @@ wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-
 sudo chmod +x ~/install-mzdpi-display.sh && ~/install-mzdpi-display.sh
 ```
 
-This script configures the DPI interface, places the display config in the correct location for Raspberry Pi OS Bookworm/Trixie (`/boot/firmware/`), and disables KMS which conflicts with the DPI output on this display.
+This script writes a verified working display configuration directly to `/boot/firmware/`, and disables KMS which conflicts with the DPI output on this display.
 
 > [!NOTE]
 > Other displays should be configured according to their manufacturer's instructions before proceeding.
@@ -69,7 +69,6 @@ tiny-tv-update # reinstalls Tiny TV program
 + _--volume_ : Set the initial volume percent *(default: 100, min: 0, max: 100)*
 + _--loop_ : Set whether video plays continuously in a loop *(default: True)*
 + _--shuffle_ : Shuffle the playback order when using category mode
-+ _--hue_ : Adjust the hue (-180 to 180) *(default: 0)*
 + _--saturation_ : Adjust the saturation (0.0 = grayscale, 1.0 = normal, max: 3.0) *(default: 1.0)*
 
 ---
