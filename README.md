@@ -52,8 +52,7 @@ sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh
 tiny-tv <input> [options]
 tiny-tv-persist <input> [options]
 tiny-tv-resume
-tiny-tv-start # starts the service, if enabled
-tiny-tv-stop # stops the service, if enabled
+tiny-tv-enable-autostart # configures Tiny TV to start automatically on boot
 tiny-tv-update # reinstalls Tiny TV program
 ```
 

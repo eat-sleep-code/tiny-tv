@@ -57,8 +57,7 @@ echo "# Tiny TV" | sudo tee -a ~/.bash_aliases > /dev/null
 sudo sed -i '$ a function tiny-tv { /home/pi/tiny-tv-venv/bin/python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-persist { screen /home/pi/tiny-tv-venv/bin/python3 ~/tiny-tv/tiny-tv.py "$@"; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-resume { screen -r; }' ~/.bash_aliases
-sudo sed -i '$ a function tiny-tv-start { systemctl start tiny-tv; }' ~/.bash_aliases
-sudo sed -i '$ a function tiny-tv-stop { systemctl stop tiny-tv; }' ~/.bash_aliases
+sudo sed -i '$ a function tiny-tv-enable-autostart { ~/tiny-tv/setup-autostart-tiny-tv.sh; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-test { /home/pi/tiny-tv-venv/bin/python3 /home/pi/tiny-tv/tiny-tv.py "https://www.youtube.com/watch?v=h8NrKjJPAuw" --saveAs "Bugs Bunny.mp4" --category "default" --removeVerticalBars; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-test-category { /home/pi/tiny-tv-venv/bin/python3 /home/pi/tiny-tv/tiny-tv.py "category" --category "default" --volume 50; }' ~/.bash_aliases
 sudo sed -i '$ a function tiny-tv-update { wget -q https://raw.githubusercontent.com/eat-sleep-code/tiny-tv/master/install-tiny-tv.sh -O ~/install-tiny-tv.sh && sudo chmod +x ~/install-tiny-tv.sh && ~/install-tiny-tv.sh; }' ~/.bash_aliases
