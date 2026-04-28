@@ -78,7 +78,7 @@ isPaused            = False
 
 # === Player Setup =============================================================
 
-vlcOptions = '--vout=fb --aout=alsa --no-osd --intf=dummy --no-video-title-show --quiet'
+vlcOptions = '--vout=fb --aout=pulse --no-osd --intf=dummy --no-video-title-show --quiet'
 if saturation != 1.0:
     vlcOptions += f' --video-filter=adjust --saturation={saturation}'
 instance = vlc.Instance(vlcOptions)

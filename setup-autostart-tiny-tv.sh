@@ -1,7 +1,7 @@
 #!/bin/bash
 # This script will set Tiny TV to autostart when a local bash session starts.
 
-AUTOSTARTCOMMAND="tiny-tv 'category' --category 'default' --shuffle True --volume 50"
+AUTOSTARTCOMMAND="tiny-tv 'category' --category 'default' --shuffle --volume 50"
 
 
 # ==============================================================================
