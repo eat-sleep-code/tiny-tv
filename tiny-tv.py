@@ -52,7 +52,7 @@ parser.add_argument('--saturation', dest='saturation', help='Saturation (0.0 = g
 args = parser.parse_args()
 
 input_path          = (args.input or '').strip()
-pidFilePath         = '/home/pi/tiny-tv/tiny-tv.pid'
+pidFilePath         = '/run/tiny-tv.pid'
 saveAs              = args.saveAs or 'youtube-id'
 maximumVideoHeight  = args.maximumVideoHeight
 category            = args.category or ''
